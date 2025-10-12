@@ -1,6 +1,180 @@
-.newspaper {
-  column-count: 3;
-  column-gap: 40px;
-  column-rule-style: solid;
-  column-rule-width: 1px;
-}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ede0d4;
+            color: #7f5539;
+            line-height: 1.6;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, #9c6644 0%, #7f5539 100%);
+            color: #ede0d4;
+            padding: 4rem 2rem;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto;
+            opacity: 0.95;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .text-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(127, 85, 57, 0.1);
+        }
+
+        .text-section h2 {
+            color: #9c6644;
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            border-bottom: 3px solid #ddb892;
+            padding-bottom: 0.5rem;
+        }
+
+        .text-section p {
+            color: #7f5539;
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        .logo-section {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(127, 85, 57, 0.1);
+            position: sticky;
+            top: 2rem;
+        }
+
+        .logo-section img {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(127, 85, 57, 0.15);
+            transition: transform 0.3s ease;
+        }
+
+        .logo-section img:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+        }
+
+        .logo-caption {
+            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            color: #9c6644;
+            font-weight: 600;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: linear-gradient(135deg, #e6ccb2 0%, #ddb892 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(127, 85, 57, 0.2);
+        }
+
+        .feature-card h3 {
+            color: #7f5539;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+
+        .feature-card p {
+            color: #9c6644;
+            line-height: 1.5;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #ddb892 0%, #b08968 100%);
+            padding: 3rem 2rem;
+            text-align: center;
+            margin-top: 3rem;
+            border-radius: 12px;
+        }
+
+        .cta-section h2 {
+            color: #ede0d4;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-button {
+            background: #7f5539;
+            color: #ede0d4;
+            padding: 1rem 3rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .cta-button:hover {
+            background: #9c6644;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .logo-section {
+                position: relative;
+                top: 0;
+            }
+        }
