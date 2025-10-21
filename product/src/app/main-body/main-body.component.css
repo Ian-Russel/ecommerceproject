@@ -84,11 +84,6 @@
             transition: transform 0.3s ease;
         }
 
-        .logo-section img:hover {
-            transform: scale(1.05);
-            cursor: pointer;
-        }
-
         .logo-caption {
             margin-top: 1.5rem;
             font-size: 1.1rem;
