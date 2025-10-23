@@ -3,141 +3,63 @@ import { Product } from '../model/product';
 import { ProductCategory } from '../model/product-category';
 import { ProductService } from '../service/product.service';
 
-
 @Component({
   selector: 'app-product-category',
   templateUrl: './product-category.component.html',
   styleUrls: ['./product-category.component.css']
 })
-
-export class ProductCategoryComponent implements OnInit  {
-      public productsCategory: ProductCategory[]  = [];
+export class ProductCategoryComponent implements OnInit {
+  public productsCategory: ProductCategory[] = [];
  
-        constructor(private productService: ProductService) {
+  constructor(private productService: ProductService) {}
+  
+  ngOnInit(): void {
+    console.log("ngOnInit called");
+    this.productService.getData().subscribe(data => {
+      this.productsCategory = data;
+    });
+  }
+
+  /**
+   * Calculate the discounted price for a product
+   */
+  calculateDiscountedPrice(product: Product): number {
+    if (product.discountPercentage > 0) {
+      const discount = product.price * (product.discountPercentage / 100);
+      return product.price - discount;
+    }
+    return product.price;
+  }
+
+  /**
+   * Add product to cart
+   */
+  addToCart(product: Product): void {
+    if (product.stockQuantity > 0) {
+      console.log('Adding to cart:', product);
+      // TODO: Implement cart service integration
+      // Example: this.cartService.addToCart(product);
       
-/*        this.productsCategory =  
-        [
-          {
-            "categoryName": "Snacks",
-            "products":   
-            [             
-              {
-                "id": 1,
-                "name": "Alaska",
-                "description" : "This is a description of Alaska",
-                "categoryName":  "Snack",
-                "unitOfMeasure": "can",
-                "imageFile": "Alaska",
-                "price": "30.00"
-              },
-              {
-                "id": 2,
-                "name": "Cardbury",
-                "description" : "This is a description of Cardbury",
-                "categoryName":  "Snacks",
-                "unitOfMeasure": "ounce",
-                "imageFile": "cardbury",
-                "price": "10.00"
-              },
-              {
-                "id": 3,
-                "name": "Milo",
-                "description" : "This is a description of Milo",
-                "unitOfMeasure": "can",
-                "categoryName":  "Snacks",
-                "imageFile": "milo",
-                "price": "120.00"
-              }
-            ]
-          },
-          {
-            "categoryName": "Audio",
-            "products":   
-            [             
-              {
-                "id":4,
-                "name": "denonreceiver",
-                "description" : "This is a description of Denon receiver",
-                "unitOfMeasure": "piece",
-                "imageFile": "denonreceiver",
-                "categoryName":  "Audio",
-                "price": "1420.00"
-              },
-              {
-                "id": 5,
-                "name": "Mango",
-                "description" : "This is a description of Mango",
-                "unitOfMeasure": "piece",
-                "imageFile": "mango",
-                "categoryName":  "Audio",
-                "price": "0.00"
-              },
-              {
-                "id": 6,
-                "name": "soundar",
-                "description" : "This is a description of the Sound bar",
-                "unitOfMeasure": "piece",
-                "imageFile": "soundbar",
-                "categoryName":  "Audio",          
-                "price": "30.00"
-              },
-              {
-                "id": 6,
-                "name": "soundar2",
-                "description" : "This is a description of another soundbar",
-                "categoryName":  "AUdio",
-                "imageFile": "soundar2",
-                "unitOfMeasure": "piece",
-                "price": "350.00"
-              }
-            ]
-          },
-          {
-            "categoryName": "Dessert",
-            "products":   
-            [             
-              {
-                "id":4,
-                "name": "banana",
-                "description" : "This is a description of banana",
-                "categoryName":  "Audio",
-                "imageFile": "banana",
-                "unitOfMeasure": "kilo",
-                "price": "20.00"
-              },
-              {
-                "id": 5,
-                "name": "Banana Split",
-                "description" : "This is a description of banana split ice cream",
-                "categoryName":  "Audio",
-                "imageFile": "bananasplit",
-                "unitOfMeasure": "serving",
-                "price": "220.00"
-              },
-              {
-                "id": 6,
-                "name": "Leo Milka",
-                "description" : "This is a description of Leo Milka",
-                "categoryName":  "Audio",
-                "imageFile": "leomilka",
-                "unitOfMeasure": "grams",
-                "price": "620.00"
-              },
-              {
-                "id": 6,
-                "name": "Strawberry",
-                "description" : "This is a description of Strawberry",
-                "categoryName":  "AUdio",
-                "imageFile": "strawberry",
-                "unitOfMeasure": "grams",
-                "price": "10.00"
-              }
-            ]
-          }
-        ]; */
-      }
-    ngOnInit(): void {
-      console.log("ngOnInit called");
-      this.productService.getData().subscribe(data => {this.productsCategory = data; });
+      // Optional: Show success message
+      alert(`${product.name} added to cart!`);
+    } else {
+      alert('This product is out of stock');
     }
   }
+
+  formatPrice(price: number): string {
+  return price.toFixed(2);
+``}
+
+  /**
+   * Open quick view modal for product details
+   */
+  quickView(product: Product): void {
+    console.log('Quick view for:', product);
+    // TODO: Implement modal/dialog service to show product details
+    // Example: this.dialogService.open(ProductQuickViewComponent, { data: product });
+    
+    // Temporary: Show alert with product info
+    alert(`Quick View: ${product.name}\n\n${product.description}\n\nPrice: ₱${this.calculateDiscountedPrice(product)}`);
+  }
+}
