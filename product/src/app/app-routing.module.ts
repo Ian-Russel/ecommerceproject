@@ -9,18 +9,31 @@ import { ProductOrderComponent } from './product-order/product-order.component';
 import { CustomerServiceComponent } from './customer-service/customer-service.component';
 import { CompanyHomeComponent } from './company-home/company-home.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
+import { AuthGuard } from './guards/auth.guard';
 
 const routes: Routes = [
   { path: '', component: MainBodyComponent },
   { path: 'home', component: MainBodyComponent },
   { path: 'products', component: ProductCategoryComponent },
-  { path: 'cart', component: ShoppingCartComponent },
-  { path: 'orders', component: ProductOrderComponent },
+  { path: 'login', component: LoginComponent },
+  { path: 'signup', component: SignupComponent },
+  
+  // Protected routes - require login
+  { 
+    path: 'cart', 
+    component: ShoppingCartComponent,
+    canActivate: [AuthGuard]  // Must be logged in
+  },
+  { 
+    path: 'orders', 
+    component: ProductOrderComponent,
+    canActivate: [AuthGuard]  // Must be logged in
+  },
+  
   { path: 'customer', component: CustomerServiceComponent },
   { path: 'company', component: CompanyHomeComponent },
   { path: 'contact', component: ContactUsComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'signup', component: SignupComponent },
+  
   { path: '**', redirectTo: '' }
 ];
 

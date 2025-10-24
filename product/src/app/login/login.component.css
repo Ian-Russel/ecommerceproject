@@ -4,28 +4,31 @@
   align-items: center;
   min-height: calc(100vh - 200px);
   padding: 20px;
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  background: linear-gradient(135deg, #d4a574 0%, #c49865 100%);
 }
 
 .login-card {
-  background: white;
+  background: #fffaf3;
   padding: 40px;
   border-radius: 12px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
+  border: 1px solid #e5c39b;
 }
 
 h2 {
   text-align: center;
-  color: #333;
+  color: #5d4037;
   margin-bottom: 10px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .subtitle {
   text-align: center;
-  color: #666;
+  color: #8d6e63;
   margin-bottom: 30px;
+  font-size: 15px;
 }
 
 .form-group {
@@ -35,64 +38,68 @@ h2 {
 label {
   display: block;
   margin-bottom: 8px;
-  color: #333;
+  color: #5d4037;
   font-weight: 500;
 }
 
 input {
   width: 100%;
   padding: 12px;
-  border: 2px solid #e0e0e0;
+  border: 2px solid #e0c097;
   border-radius: 8px;
   font-size: 16px;
-  transition: border-color 0.3s;
+  transition: border-color 0.3s, box-shadow 0.3s;
   box-sizing: border-box;
+  background: #fffaf3;
 }
 
 input:focus {
   outline: none;
-  border-color: #d946a6;
+  border-color: #c49865;
+  box-shadow: 0 0 4px rgba(196, 152, 101, 0.5);
 }
 
 .error-message {
-  background: #ffebee;
-  color: #c62828;
+  background: #fff0e0;
+  color: #8b0000;
   padding: 12px;
   border-radius: 8px;
   margin-bottom: 20px;
   font-size: 14px;
+  border: 1px solid #d4a574;
 }
 
 .btn-login {
   width: 100%;
   padding: 14px;
-  background: #d946a6;
+  background: #c49865;
   color: white;
   border: none;
   border-radius: 8px;
   font-size: 16px;
   font-weight: bold;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.3s, transform 0.2s;
 }
 
 .btn-login:hover:not(:disabled) {
-  background: #b8388a;
+  background: #b38355;
+  transform: translateY(-2px);
 }
 
 .btn-login:disabled {
-  background: #ccc;
+  background: #d9c3a0;
   cursor: not-allowed;
 }
 
 .signup-link {
   text-align: center;
   margin-top: 20px;
-  color: #666;
+  color: #8d6e63;
 }
 
 .signup-link a {
-  color: #d946a6;
+  color: #b38355;
   text-decoration: none;
   font-weight: bold;
 }

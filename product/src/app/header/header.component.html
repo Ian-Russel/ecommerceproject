@@ -1,20 +1,39 @@
 <div class="header">
-  <div class="header-container">
-    <div class="logo-section">
-      <a routerLink="">
-        <img src="../assets/BCorpText.png" alt="GMART Logo" class="logo" />
-      </a>
-      <p class="tagline">Take the most fashionable step forward</p>
+    <div class="header-content">
+        <div class="logo-section">
+            <a routerLink="/">
+                <img src="assets/BCorpLogo.png" alt="Bautista Corporation" class="logo" />
+            </a>
+            <span class="tagline">Where you enjoy the most shopping experience</span>
+        </div>
+        
+        <nav class="nav-menu">
+            <button 
+                *ngFor="let menu of menus" 
+                class="nav-button"
+                [routerLink]="'/' + menu.routerPath"
+                [routerLinkActive]="'active'"
+            >
+                {{menu.name}}
+            </button>
+            
+            <ng-container *ngIf="!currentUser">
+                <button class="nav-button" routerLink="/signup">
+                    Sign Up
+                </button>
+                <button class="nav-button" routerLink="/login">
+                    Login
+                </button>
+            </ng-container>
+            
+            <ng-container *ngIf="currentUser">
+                <button class="nav-button user-display">
+                    👤 {{getUserDisplayName()}}
+                </button>
+                <button class="nav-button logout-button" (click)="logout()">
+                    Logout
+                </button>
+            </ng-container>
+        </nav>
     </div>
-    
-    <nav class="nav-menu">
-      <button 
-        *ngFor="let menu of menus" 
-        class="nav-button" 
-        routerLink="/{{menu.routerPath}}"
-      >
-        {{menu.name}}
-      </button>
-    </nav>
-  </div>
 </div>
