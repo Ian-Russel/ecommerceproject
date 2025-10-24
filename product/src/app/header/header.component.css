@@ -1,13 +1,15 @@
 .header {
   width: 100%;
-  max-width: 1601px;
-  margin: 0 auto;
   background-image: url("../../assets/header.png");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   padding: 1rem 2rem;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
+
 
 .header-container {
   display: flex;

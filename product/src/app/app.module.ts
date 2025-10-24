@@ -1,5 +1,9 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { HttpClientModule } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -10,12 +14,13 @@ import { MainHeaderComponent } from './main-header/main-header.component';
 import { GalleryComponent } from './gallery/gallery.component';
 import { XboxComponent } from './xbox/xbox.component';
 import { ProductCategoryComponent } from './product-category/product-category.component';
-import { HttpClientModule } from '@angular/common/http';
 import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
 import { ProductOrderComponent } from './product-order/product-order.component';
 import { CustomerServiceComponent } from './customer-service/customer-service.component';
 import { CompanyHomeComponent } from './company-home/company-home.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
+import { LoginComponent } from './login/login.component';
+import { SignupComponent } from './signup/signup.component';
 
 @NgModule({
   declarations: [
@@ -31,12 +36,17 @@ import { ContactUsComponent } from './contact-us/contact-us.component';
     ProductOrderComponent,
     CustomerServiceComponent,
     CompanyHomeComponent,
-    ContactUsComponent
+    ContactUsComponent,
+    LoginComponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,
+    CommonModule,
+    RouterModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

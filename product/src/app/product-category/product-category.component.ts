@@ -51,15 +51,10 @@ export class ProductCategoryComponent implements OnInit {
   return price.toFixed(2);
 ``}
 
-  /**
-   * Open quick view modal for product details
-   */
+  
   quickView(product: Product): void {
     console.log('Quick view for:', product);
-    // TODO: Implement modal/dialog service to show product details
-    // Example: this.dialogService.open(ProductQuickViewComponent, { data: product });
-    
-    // Temporary: Show alert with product info
+ 
     alert(`Quick View: ${product.name}\n\n${product.description}\n\nPrice: ₱${this.calculateDiscountedPrice(product)}`);
   }
 }
