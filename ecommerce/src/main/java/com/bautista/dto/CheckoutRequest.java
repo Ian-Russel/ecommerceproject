@@ -1,14 +1,12 @@
-package com.bautista.model;
+package com.bautista.dto;
 
+import com.bautista.model.OrderItem;
 import lombok.Data;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 
 @Data
-public class Order {
-    private Integer id;
-    private String orderNumber;
+public class CheckoutRequest {
     private Integer userId;
     private String customerName;
     private String customerEmail;
@@ -20,9 +18,6 @@ public class Order {
     private BigDecimal totalAmount;
     private Integer totalItems;
     private String paymentMethod;
-    private String status;
     private String notes;
-    private Date orderDate;
-    private Date lastUpdated;
     private List<OrderItem> orderItems;
 }

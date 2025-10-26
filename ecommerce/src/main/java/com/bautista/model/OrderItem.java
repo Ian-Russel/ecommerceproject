@@ -1,24 +1,18 @@
 package com.bautista.model;
-import com.bautista.enums.OrderItemStatus;
-import lombok.Data;
 
-import java.util.*;
+import lombok.Data;
+import java.math.BigDecimal;
 
 @Data
 public class OrderItem {
-    int id;
-    int orderId;
-    int customerId;
-    String customerName;
-    int productId;
-    String productName;
-    String productDescription;
-    String productCategoryName;
-    String productImageFile;
-    String productUnitOfMeasure;
-    double quantity;
-    double price;
-    OrderItemStatus status;
-    Date created;
-    Date lastUpdated;
+    private Integer id;
+    private Integer productId;
+    private String productName;
+    private String productImage;
+    private BigDecimal productPrice;
+    private Integer quantity;
+    private BigDecimal subtotal;
+    private String productColor;
+    private String productSize;
+    private String productBrand;
 }

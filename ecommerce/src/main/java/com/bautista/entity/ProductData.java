@@ -14,54 +14,50 @@ import java.util.Date;
 @Table(name = "product_data")
 public class ProductData {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Changed from AUTO to IDENTITY
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    // COMMON FIELDS - All products have these
     private String name;
 
     @Column(length = 1000)
     private String description;
 
     @Column(name = "product_type")
-    private String productType;  // "footwear", "bag", "clothing", "accessory"
+    private String productType;
 
     @Column(name = "category_name")
-    private String categoryName;  // "Running Shoes", "Backpack", "T-Shirt"
+    private String categoryName;
 
     @Column(name = "sub_category")
-    private String subCategory;  // "Athletic", "Casual", "Formal"
+    private String subCategory;
 
     @Column(name = "unit_of_measure")
-    private String unitOfMeasure;  // "pair", "piece", "set"
+    private String unitOfMeasure;
 
     @Column(name = "price", precision = 10, scale = 2)
-    private BigDecimal price;  // Changed from String to BigDecimal
+    private BigDecimal price;
 
     @Column(name = "image_file")
     private String imageFile;
 
     @Column(name = "additional_images", length = 1000)
-    private String additionalImages;  // JSON array: ["image1.jpg", "image2.jpg"]
+    private String additionalImages;
 
-    // BRANDING & CATEGORIZATION
     @Column(name = "brand")
-    private String brand;  // "BautistaCorp Classic", "BautistaCorp Sport"
+    private String brand;
 
     @Column(name = "color")
     private String color;
 
     @Column(name = "gender")
-    private String gender;  // "Men", "Women", "Unisex", "Kids"
+    private String gender;
 
-    // INVENTORY & SKU
     @Column(name = "stock_quantity")
     private Integer stockQuantity;
 
     @Column(name = "sku", unique = true, length = 100)
-    private String sku;  // Unique product identifier
+    private String sku;
 
-    // MARKETING & PROMOTIONS
     @Column(name = "discount_percentage")
     private Integer discountPercentage;
 
@@ -74,25 +70,21 @@ public class ProductData {
     @Column(name = "is_best_seller")
     private Boolean isBestSeller;
 
-    // RATINGS & REVIEWS
     @Column(name = "rating")
-    private Double rating;  // Average rating 0-5
+    private Double rating;
 
     @Column(name = "review_count")
     private Integer reviewCount;
 
-    // FLEXIBLE ATTRIBUTES - Product-specific fields stored as JSON
     @Column(name = "attributes", columnDefinition = "JSON")
-    private String attributes;  // Type-specific attributes
+    private String attributes;
 
     @Column(name = "specifications", columnDefinition = "JSON")
-    private String specifications;  // Additional specs
+    private String specifications;
 
-    // STATUS
     @Column(name = "status")
     private String status;  // "Active", "Inactive", "Out of Stock", "Discontinued"
 
-    // TIMESTAMPS
     @UpdateTimestamp
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+08:00")

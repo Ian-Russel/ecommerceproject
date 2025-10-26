@@ -15,6 +15,9 @@
                 [routerLinkActive]="'active'"
             >
                 {{menu.name}}
+                <span *ngIf="menu.routerPath === 'cart' && cartItemCount > 0" class="cart-badge">
+                    {{cartItemCount}}
+                </span>
             </button>
             
             <ng-container *ngIf="!currentUser">

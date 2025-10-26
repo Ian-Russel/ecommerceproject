@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuService } from '../service/menu.service';
 import { AuthService } from '../service/auth.service';
+import { CartService } from '../service/cart.service';
 import { Menu } from '../model/menu';
 import { LoginResponse } from '../model/user';
 import { Router } from '@angular/router';
@@ -13,10 +14,12 @@ import { Router } from '@angular/router';
 export class HeaderComponent implements OnInit  {
   public menus: Menu[] = [];
   public currentUser: LoginResponse | null = null;
+  public cartItemCount: number = 0;
 
   constructor(
     private menuService: MenuService,
     private authService: AuthService,
+    private cartService: CartService,
     private router: Router
   ) {}
 
@@ -29,6 +32,10 @@ export class HeaderComponent implements OnInit  {
     
     this.authService.currentUser$.subscribe((user: LoginResponse | null) => {
       this.currentUser = user;
+    });
+    
+    this.cartService.cart$.subscribe(cart => {
+      this.cartItemCount = cart.totalItems;
     });
   }
 

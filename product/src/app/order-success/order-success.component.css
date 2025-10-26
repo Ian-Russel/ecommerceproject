@@ -1,0 +1,185 @@
+.success-container {
+    min-height: calc(100vh - 200px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #fffdf8 0%, #f8f4ef 100%);
+}
+
+.success-card {
+    background: #fffdf8;
+    padding: 50px 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(212, 165, 116, 0.15);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+    border: 1px solid #f0e5d8;
+}
+
+.success-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #d4a574 0%, #c49865 100%);
+    color: white;
+    font-size: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 30px;
+    animation: scaleIn 0.5s ease-out;
+    box-shadow: 0 4px 15px rgba(196, 152, 101, 0.4);
+}
+
+@keyframes scaleIn {
+    from { transform: scale(0); }
+    to { transform: scale(1); }
+}
+
+h1 {
+    font-size: 32px;
+    color: #4a2c2a;
+    margin-bottom: 15px;
+}
+
+.success-message {
+    color: #6b4b3b;
+    font-size: 16px;
+    margin-bottom: 30px;
+    line-height: 1.6;
+}
+
+.order-details {
+    background: #f8f4ef;
+    padding: 25px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    text-align: left;
+    border: 1px solid #f0e5d8;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #f0e5d8;
+}
+
+.detail-row:last-child {
+    border-bottom: none;
+}
+
+.label {
+    font-weight: 600;
+    color: #6b4b3b;
+}
+
+.value {
+    color: #4a2c2a;
+    font-weight: 500;
+}
+
+.value.amount {
+    color: #c49865;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.value.status {
+    color: #d4a574;
+    font-weight: bold;
+}
+
+.shipping-info {
+    background: #fdfaf5;
+    padding: 20px;
+    border-radius: 12px;
+    margin-bottom: 25px;
+    text-align: left;
+    border: 1px solid #f0e5d8;
+}
+
+.shipping-info h3 {
+    font-size: 18px;
+    color: #4a2c2a;
+    margin-bottom: 12px;
+}
+
+.shipping-info p {
+    margin: 4px 0;
+    color: #6b4b3b;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.btn-primary,
+.btn-secondary {
+    flex: 1;
+    padding: 14px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #d4a574 0%, #c49865 100%);
+    color: white;
+    border: none;
+    box-shadow: 0 4px 12px rgba(196, 152, 101, 0.3);
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #c49865 0%, #b78752 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(196, 152, 101, 0.5);
+}
+
+.btn-secondary {
+    background: white;
+    color: #c49865;
+    border: 2px solid #c49865;
+}
+
+.btn-secondary:hover {
+    background: #f8f4ef;
+}
+
+.info-box {
+    background: #fffaf2;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: left;
+    border: 1px solid #f0e5d8;
+}
+
+.info-box p {
+    margin: 8px 0;
+    color: #6b4b3b;
+    font-size: 14px;
+}
+
+.loading {
+    text-align: center;
+    font-size: 18px;
+    color: #6b4b3b;
+}
+
+@media (max-width: 768px) {
+    .success-card {
+        padding: 30px 20px;
+    }
+    .action-buttons {
+        flex-direction: column;
+    }
+    h1 {
+        font-size: 24px;
+    }
+}

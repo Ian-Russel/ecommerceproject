@@ -5,6 +5,8 @@ import { ProductCategoryComponent } from './product-category/product-category.co
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
 import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
+import { CheckoutComponent } from './checkout/checkout.component';
+import { OrderSuccessComponent } from './order-success/order-success.component';
 import { ProductOrderComponent } from './product-order/product-order.component';
 import { CustomerServiceComponent } from './customer-service/customer-service.component';
 import { CompanyHomeComponent } from './company-home/company-home.component';
@@ -18,18 +20,29 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   
-  // Protected routes - require login
+  // Require login
   { 
     path: 'cart', 
     component: ShoppingCartComponent,
-    canActivate: [AuthGuard]  // Must be logged in
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: 'checkout', 
+    component: CheckoutComponent,
+    canActivate: [AuthGuard]
+  },
+  { 
+    path: 'order-success', 
+    component: OrderSuccessComponent,
+    canActivate: [AuthGuard]
   },
   { 
     path: 'orders', 
     component: ProductOrderComponent,
-    canActivate: [AuthGuard]  // Must be logged in
+    canActivate: [AuthGuard]
   },
   
+  // No login needed
   { path: 'customer', component: CustomerServiceComponent },
   { path: 'company', component: CompanyHomeComponent },
   { path: 'contact', component: ContactUsComponent },

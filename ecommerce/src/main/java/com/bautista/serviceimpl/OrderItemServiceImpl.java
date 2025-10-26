@@ -55,7 +55,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         while(it.hasNext()) {
             OrderItemData orderItemData = it.next();
-            if(orderItemData.getStatus() == OrderItemStatus.Ordered) {
+            if(orderItemData.getStatus() == OrderItemStatus.ORDERED) {
                 orderItem = transformOrderItemData.transform(orderItemData);
                 orderItems.add(orderItem);
             }
@@ -76,7 +76,7 @@ public class OrderItemServiceImpl implements OrderItemService {
 
         while(it.hasNext()) {
             OrderItemData orderItemData = it.next();
-            if(orderItemData.getStatus() == OrderItemStatus.Created) {
+            if(orderItemData.getStatus() == OrderItemStatus.CREATED) {
                 orderItem = transformOrderItemData.transform(orderItemData);
                 orderItems.add(orderItem);
             }

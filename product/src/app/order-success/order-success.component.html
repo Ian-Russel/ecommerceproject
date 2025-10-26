@@ -1,0 +1,64 @@
+<div class="success-container">
+    <div class="success-card" *ngIf="!isLoading && order">
+        <div class="success-icon">✓</div>
+        
+        <h1>Order Placed Successfully!</h1>
+        
+        <p class="success-message">
+            Thank you for your order. We've received your order and will process it shortly.
+        </p>
+        
+        <div class="order-details">
+            <div class="detail-row">
+                <span class="label">Order Number:</span>
+                <span class="value">{{order.orderNumber}}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="label">Order Date:</span>
+                <span class="value">{{order.orderDate | date:'medium'}}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="label">Total Amount:</span>
+                <span class="value amount">₱{{order.totalAmount | number:'1.2-2'}}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="label">Payment Method:</span>
+                <span class="value">{{order.paymentMethod}}</span>
+            </div>
+            
+            <div class="detail-row">
+                <span class="label">Status:</span>
+                <span class="value status">{{order.status}}</span>
+            </div>
+        </div>
+        
+        <div class="shipping-info">
+            <h3>Shipping Address</h3>
+            <p>{{order.customerName}}</p>
+            <p>{{order.shippingAddress}}</p>
+            <p>{{order.shippingCity}}, {{order.shippingProvince}} {{order.shippingPostalCode}}</p>
+            <p>{{order.customerPhone}}</p>
+        </div>
+        
+        <div class="action-buttons">
+            <button class="btn-primary" (click)="viewOrders()">
+                View My Orders
+            </button>
+            <button class="btn-secondary" (click)="continueShopping()">
+                Continue Shopping
+            </button>
+        </div>
+        
+        <div class="info-box">
+            <p>A confirmation email has been sent to {{order.customerEmail}}</p>
+            <p>You can track your order status in the "My Orders" section</p>
+        </div>
+    </div>
+    
+    <div class="loading" *ngIf="isLoading">
+        Loading order details...
+    </div>
+</div>

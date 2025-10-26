@@ -1,60 +1,68 @@
 import { Component, OnInit } from '@angular/core';
-import { Product } from '../model/product';
-import { ProductCategory } from '../model/product-category';
+import { CommonModule } from '@angular/common';
 import { ProductService } from '../service/product.service';
+import { CartService } from '../service/cart.service';
+import { AuthService } from '../service/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-product-category',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './product-category.component.html',
   styleUrls: ['./product-category.component.css']
 })
 export class ProductCategoryComponent implements OnInit {
-  public productsCategory: ProductCategory[] = [];
- 
-  constructor(private productService: ProductService) {}
-  
+  productsCategory: any[] = [];
+  isLoading = true;
+
+  constructor(
+    private productService: ProductService,
+    private cartService: CartService,
+    private authService: AuthService,
+    private router: Router
+  ) {}
+
   ngOnInit(): void {
-    console.log("ngOnInit called");
-    this.productService.getData().subscribe(data => {
-      this.productsCategory = data;
+    this.loadProducts();
+  }
+
+  loadProducts(): void {
+    this.productService.getData().subscribe({
+      next: (data: any) => {
+        this.productsCategory = data;
+        this.isLoading = false;
+      },
+      error: (error: any) => {
+        console.error('Error loading products:', error);
+        this.isLoading = false;
+      }
     });
   }
 
-  /**
-   * Calculate the discounted price for a product
-   */
-  calculateDiscountedPrice(product: Product): number {
-    if (product.discountPercentage > 0) {
-      const discount = product.price * (product.discountPercentage / 100);
-      return product.price - discount;
+  addToCart(product: any, event: Event): void {
+    event.stopPropagation();
+
+    if (!this.authService.isLoggedIn()) {
+      if (confirm('Please login to add items to cart. Would you like to login now?')) {
+        this.router.navigate(['/login']);
+      }
+      return;
     }
-    return product.price;
+
+    this.cartService.addToCart(product, 1);
+    alert(`${product.name} added to cart!`);
   }
 
-  /**
-   * Add product to cart
-   */
-  addToCart(product: Product): void {
-    if (product.stockQuantity > 0) {
-      console.log('Adding to cart:', product);
-      // TODO: Implement cart service integration
-      // Example: this.cartService.addToCart(product);
-      
-      // Optional: Show success message
-      alert(`${product.name} added to cart!`);
-    } else {
-      alert('This product is out of stock');
-    }
+  isOutOfStock(product: any): boolean {
+    return product.stockQuantity === 0;
+  }
+
+  calculateDiscountedPrice(product: any): number {
+    return product.price * (1 - product.discountPercentage / 100);
   }
 
   formatPrice(price: number): string {
-  return price.toFixed(2);
-``}
-
-  
-  quickView(product: Product): void {
-    console.log('Quick view for:', product);
- 
-    alert(`Quick View: ${product.name}\n\n${product.description}\n\nPrice: ₱${this.calculateDiscountedPrice(product)}`);
+    return price.toFixed(2);
   }
 }

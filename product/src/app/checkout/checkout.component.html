@@ -1,0 +1,215 @@
+<div class="checkout-container">
+    <div class="checkout-content">
+        <div class="checkout-form">
+            <h1>Checkout</h1>
+
+            <div class="error-message" *ngIf="errorMessage">
+                {{ errorMessage }}
+            </div>
+
+            <form #checkoutFormElement="ngForm">
+                <div class="form-section">
+                    <h2>Customer Information</h2>
+
+                    <div class="form-group">
+                        <label for="customerName">Full Name *</label>
+                        <input 
+                            type="text" 
+                            id="customerName" 
+                            name="customerName"
+                            [(ngModel)]="checkoutForm.customerName" 
+                            required
+                        >
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="customerEmail">Email *</label>
+                            <input 
+                                type="email" 
+                                id="customerEmail" 
+                                name="customerEmail"
+                                [(ngModel)]="checkoutForm.customerEmail" 
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="customerPhone">Phone Number *</label>
+                            <input 
+                                type="tel" 
+                                id="customerPhone" 
+                                name="customerPhone"
+                                [(ngModel)]="checkoutForm.customerPhone" 
+                                placeholder="+63 9XX XXX XXXX"
+                                required
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Shipping Address</h2>
+
+                    <div class="form-group">
+                        <label for="shippingAddress">Street Address *</label>
+                        <input 
+                            type="text" 
+                            id="shippingAddress" 
+                            name="shippingAddress"
+                            [(ngModel)]="checkoutForm.shippingAddress" 
+                            placeholder="House/Unit No., Street Name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="shippingCity">City *</label>
+                            <input 
+                                type="text" 
+                                id="shippingCity" 
+                                name="shippingCity"
+                                [(ngModel)]="checkoutForm.shippingCity" 
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="shippingProvince">Province *</label>
+                            <select 
+                                id="shippingProvince" 
+                                name="shippingProvince"
+                                [(ngModel)]="checkoutForm.shippingProvince" 
+                                required
+                            >
+                                <option value="">Select Province</option>
+                                <option *ngFor="let province of provinces" [value]="province">
+                                    {{province}}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="shippingPostalCode">Postal Code</label>
+                        <input 
+                            type="text" 
+                            id="shippingPostalCode" 
+                            name="shippingPostalCode"
+                            [(ngModel)]="checkoutForm.shippingPostalCode" 
+                            placeholder="Optional"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Payment Method</h2>
+
+                    <div class="payment-options">
+                        <label class="payment-option">
+                            <input 
+                                type="radio" 
+                                name="paymentMethod" 
+                                value="COD"
+                                [(ngModel)]="checkoutForm.paymentMethod"
+                            >
+                            <span class="payment-label">
+                                <strong>Cash on Delivery (COD)</strong>
+                                <small>Pay when you receive your order</small>
+                            </span>
+                        </label>
+
+                        <label class="payment-option">
+                            <input 
+                                type="radio" 
+                                name="paymentMethod" 
+                                value="Online"
+                                [(ngModel)]="checkoutForm.paymentMethod"
+                            >
+                            <span class="payment-label">
+                                <strong>Online Payment</strong>
+                                <small>Pay via GCash, PayMaya, or Credit Card</small>
+                            </span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Order Notes (Optional)</h2>
+
+                    <div class="form-group">
+                        <textarea 
+                            id="notes" 
+                            name="notes"
+                            [(ngModel)]="checkoutForm.notes" 
+                            rows="4"
+                            placeholder="Special instructions for delivery..."
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button 
+                        type="button" 
+                        class="btn-secondary" 
+                        (click)="goBack()"
+                        [disabled]="isProcessing"
+                    >
+                        ← Back to Cart
+                    </button>
+
+                    <button 
+                        type="button" 
+                        class="btn-primary" 
+                        (click)="placeOrder()"
+                        [disabled]="isProcessing"
+                    >
+                        <span *ngIf="!isProcessing">Place Order</span>
+                        <span *ngIf="isProcessing">Processing...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <div class="order-summary-sidebar">
+            <div class="summary-sticky">
+                <h2>Order Summary</h2>
+
+                <div class="summary-items">
+                    <div *ngFor="let item of cart.items" class="summary-item">
+                        <img [src]="'assets/products/' + item.productImage" [alt]="item.productName">
+                        <div class="item-info">
+                            <p class="item-name">{{item.productName}}</p>
+                            <p class="item-qty">Qty: {{item.quantity}}</p>
+                        </div>
+                        <p class="item-price">₱{{item.subtotal | number:'1.2-2'}}</p>
+                    </div>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-row">
+                    <span>Subtotal ({{cart.totalItems}} items):</span>
+                    <span>₱{{cart.totalPrice | number:'1.2-2'}}</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Shipping Fee:</span>
+                    <span class="free">FREE</span>
+                </div>
+
+                <div class="summary-divider"></div>
+
+                <div class="summary-row total">
+                    <span>Total:</span>
+                    <span>₱{{cart.totalPrice | number:'1.2-2'}}</span>
+                </div>
+
+                <div class="secure-checkout">
+                    🔒 Secure Checkout
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

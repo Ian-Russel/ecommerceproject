@@ -1,12 +1,16 @@
 package com.bautista.enums;
 
 public enum OrderItemStatus {
-    Created,
-    Ordered,
-    invoiced,
-    Paid,
-    Picked,
-    Packed,
-    Received,
-    Completed
+    PENDING,
+    CREATED,
+    ORDERED,
+    INVOICED,
+    PAID,
+    PICKED,
+    PACKED,
+    PROCESSING,
+    SHIPPED,
+    RECEIVED,
+    COMPLETED,
+    CANCELED
 }

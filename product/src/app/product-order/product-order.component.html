@@ -1,1 +1,103 @@
-<p>product-order works!</p>
+<div class="orders-container">
+    <div class="orders-header">
+        <h1>My Orders</h1>
+        <p class="subtitle">Track and manage your orders</p>
+    </div>
+
+    <div *ngIf="isLoading" class="loading">
+        <div class="loading-spinner"></div>
+        <p>Loading your orders...</p>
+    </div>
+
+    <div *ngIf="!isLoading" class="orders-content">
+        
+        <div class="filter-tabs">
+            <button 
+                *ngFor="let status of statusOptions"
+                class="filter-tab"
+                [class.active]="selectedStatus === status"
+                (click)="filterByStatus(status)"
+            >
+                {{status}}
+                <span class="count" *ngIf="status === 'All'">
+                    ({{orders.length}})
+                </span>
+                <span class="count" *ngIf="status !== 'All'">
+                    ({{(orders | filter:status:'status').length}})
+                </span>
+            </button>
+        </div>
+
+        <div *ngIf="filteredOrders.length === 0 && !isLoading" class="empty-state">
+            <div class="empty-icon">📦</div>
+            <h2>No orders found</h2>
+            <p *ngIf="selectedStatus === 'All'">You haven't placed any orders yet</p>
+            <p *ngIf="selectedStatus !== 'All'">No orders with status: {{selectedStatus}}</p>
+            <button class="btn-primary" (click)="continueShopping()">
+                Start Shopping
+            </button>
+        </div>
+
+        <div class="orders-list" *ngIf="filteredOrders.length > 0">
+            <div *ngFor="let order of filteredOrders" class="order-card">
+                
+                <div class="order-header">
+                    <div class="order-number">
+                        <strong>Order #{{order.orderNumber}}</strong>
+                        <span class="order-date">{{order.orderDate | date:'medium'}}</span>
+                    </div>
+                    
+                    <div class="order-status" [ngClass]="getStatusClass(order.status)">
+                        <span class="status-icon">{{getStatusIcon(order.status)}}</span>
+                        <span class="status-text">{{order.status}}</span>
+                    </div>
+                </div>
+
+                <div class="order-items">
+                    <div *ngFor="let item of order.orderItems" class="order-item">
+                        <img 
+                            [src]="'assets/products/' + item.productImage" 
+                            [alt]="item.productName"
+                            class="item-image"
+                        >
+                        <div class="item-details">
+                            <p class="item-name">{{item.productName}}</p>
+                            <p class="item-meta">Qty: {{item.quantity}} × ₱{{item.productPrice | number:'1.2-2'}}</p>
+                            <p class="item-meta" *ngIf="item.productColor">Color: {{item.productColor}}</p>
+                            <p class="item-meta" *ngIf="item.productSize">Size: {{item.productSize}}</p>
+                        </div>
+                        <div class="item-subtotal">
+                            ₱{{item.subtotal | number:'1.2-2'}}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-footer">
+                    <div class="order-info">
+                        <div class="info-item">
+                            <span class="label">Total Items:</span>
+                            <span class="value">{{order.totalItems}}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="label">Payment:</span>
+                            <span class="value">{{order.paymentMethod}}</span>
+                        </div>
+                        <div class="info-item total">
+                            <span class="label">Total Amount:</span>
+                            <span class="value">₱{{order.totalAmount | number:'1.2-2'}}</span>
+                        </div>
+                    </div>
+                    
+                    <button class="btn-view-details" (click)="viewOrderDetails(order)">
+                        View Details →
+                    </button>
+                </div>
+
+                <div class="shipping-address">
+                    <strong>Shipping to:</strong>
+                    {{order.shippingAddress}}, {{order.shippingCity}}, {{order.shippingProvince}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

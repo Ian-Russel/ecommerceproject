@@ -21,6 +21,9 @@ import { CompanyHomeComponent } from './company-home/company-home.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { LoginComponent } from './login/login.component';
 import { SignupComponent } from './signup/signup.component';
+import { CheckoutComponent } from './checkout/checkout.component';
+import { OrderSuccessComponent } from './order-success/order-success.component';
+import { FilterPipe } from './pipes/filter.pipe';
 
 @NgModule({
   declarations: [
@@ -31,16 +34,21 @@ import { SignupComponent } from './signup/signup.component';
     MainHeaderComponent,
     GalleryComponent,
     XboxComponent,
-    ProductCategoryComponent,
     ShoppingCartComponent,
     ProductOrderComponent,
     CustomerServiceComponent,
     CompanyHomeComponent,
     ContactUsComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    CheckoutComponent,
+    OrderSuccessComponent,
+    CheckoutComponent,
+    OrderSuccessComponent,
+    FilterPipe
   ],
   imports: [
+    ProductCategoryComponent,
     BrowserModule,
     CommonModule,
     RouterModule,
