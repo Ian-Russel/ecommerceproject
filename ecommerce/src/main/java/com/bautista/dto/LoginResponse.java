@@ -10,6 +10,6 @@ public class LoginResponse {
     private String firstName;
     private String lastName;
     private String role;
-    private String token;  // For future JWT implementation
+    private String token;
     private String message;
 }

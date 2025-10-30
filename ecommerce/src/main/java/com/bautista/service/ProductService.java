@@ -1,5 +1,7 @@
 package com.bautista.service;
 
+import com.bautista.dto.FilterOptions;
+import com.bautista.dto.ProductSearchRequest;
 import com.bautista.model.Product;
 import com.bautista.model.ProductCategory;
 
@@ -15,4 +17,6 @@ public interface ProductService {
     void delete(Integer id);
     Map<String, List<Product>> getCategoryMappedProducts();
     List<ProductCategory> listProductCategories();
+    List<Product> searchProducts(ProductSearchRequest request);
+    FilterOptions getFilterOptions();
 }

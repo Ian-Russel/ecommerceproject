@@ -20,7 +20,6 @@ public class AuthService {
     private UserDataRepository userRepository;
 
     public LoginResponse login(LoginRequest request) throws Exception {
-        // Find user by username or email
         Optional<UserData> userOpt = userRepository.findByUsernameOrEmail(
                 request.getUsername(),
                 request.getUsername()
@@ -32,8 +31,6 @@ public class AuthService {
 
         UserData user = userOpt.get();
 
-        // For school project: Simple password comparison
-        // In production: Use BCrypt or similar
         if (!user.getPassword().equals(request.getPassword())) {
             throw new Exception("Invalid password");
         }
@@ -42,11 +39,9 @@ public class AuthService {
             throw new Exception("Account is inactive");
         }
 
-        // Update last login
         user.setLastLogin(new Date());
         userRepository.save(user);
 
-        // Create response
         LoginResponse response = new LoginResponse();
         response.setId(user.getId());
         response.setUsername(user.getUsername());
@@ -60,7 +55,6 @@ public class AuthService {
     }
 
     public LoginResponse signup(SignupRequest request) throws Exception {
-        // Validate input
         if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
             throw new Exception("Username is required");
         }
@@ -77,21 +71,18 @@ public class AuthService {
             throw new Exception("Passwords do not match");
         }
 
-        // Check if username exists
         if (userRepository.existsByUsername(request.getUsername())) {
             throw new Exception("Username already exists");
         }
 
-        // Check if email exists
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new Exception("Email already exists");
         }
 
-        // Create new user
         UserData newUser = new UserData();
         newUser.setUsername(request.getUsername());
         newUser.setEmail(request.getEmail());
-        newUser.setPassword(request.getPassword());  // In production: hash this!
+        newUser.setPassword(request.getPassword());
         newUser.setFirstName(request.getFirstName());
         newUser.setLastName(request.getLastName());
         newUser.setPhoneNumber(request.getPhoneNumber());
@@ -101,7 +92,6 @@ public class AuthService {
 
         UserData savedUser = userRepository.save(newUser);
 
-        // Create response
         LoginResponse response = new LoginResponse();
         response.setId(savedUser.getId());
         response.setUsername(savedUser.getUsername());

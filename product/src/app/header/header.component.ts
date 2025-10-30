@@ -11,10 +11,11 @@ import { Router } from '@angular/router';
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit  {
+export class HeaderComponent implements OnInit {
   public menus: Menu[] = [];
   public currentUser: LoginResponse | null = null;
   public cartItemCount: number = 0;
+  public searchQuery: string = '';
 
   constructor(
     private menuService: MenuService,
@@ -49,5 +50,19 @@ export class HeaderComponent implements OnInit  {
   getUserDisplayName(): string {
     if (!this.currentUser) return '';
     return this.currentUser.firstName || this.currentUser.username;
+  }
+
+  onSearch(): void {
+    if (this.searchQuery.trim()) {
+      this.router.navigate(['/products'], { 
+        queryParams: { search: this.searchQuery } 
+      });
+    }
+  }
+
+  onSearchKeyPress(event: KeyboardEvent): void {
+    if (event.key === 'Enter') {
+      this.onSearch();
+    }
   }
 }

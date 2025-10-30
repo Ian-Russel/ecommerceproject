@@ -2,105 +2,219 @@
   <div class="page-hero">
     <h1>Our Footwear Collection</h1>
     <p>Discover premium quality in every step</p>
+    
+    <div class="search-container">
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Search products..."
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="onSearch()"
+      />
+      <button class="search-btn" (click)="onSearch()">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/>
+          <path d="m21 21-4.35-4.35"/>
+        </svg>
+        Search
+      </button>
+    </div>
   </div>
 
-  <div class="products-container">
-    <ng-container *ngFor="let category of productsCategory">
-      <div class="category-section">
-        <div class="category-header">
-          <h2 class="category-title">{{ category.categoryName }}</h2>
-          <span class="category-count">{{ category.products.length }} items</span>
+  <div class="content-wrapper">
+    <aside class="filters-sidebar" [class.collapsed]="!showFilters">
+      <div class="filters-header">
+        <h3>Filters</h3>
+        <button class="toggle-filters-btn" (click)="toggleFilters()">
+          {{ showFilters ? 'Hide' : 'Show' }}
+        </button>
+      </div>
+
+      <div class="filters-content" *ngIf="showFilters">
+        <div class="filter-group">
+          <label class="filter-label">Category</label>
+          <select class="filter-select" [(ngModel)]="selectedCategory" (change)="onFilterChange()">
+            <option value="">All Categories</option>
+            <option *ngFor="let category of filterOptions.categories" [value]="category">
+              {{ category }}
+            </option>
+          </select>
         </div>
-        
-        <div class="products-grid">
-          <div *ngFor="let prod of category.products" class="product-card">
-            <!-- Product Badges -->
-            <div class="product-badges">
-              <span *ngIf="prod.isNewArrival" class="badge new">New</span>
-              <span *ngIf="prod.isBestSeller" class="badge bestseller">Best Seller</span>
-              <span *ngIf="prod.discountPercentage > 0" class="badge discount">
-                -{{ prod.discountPercentage }}%
-              </span>
-              <span *ngIf="isOutOfStock(prod)" class="badge out-of-stock">Out of Stock</span>
+
+        <div class="filter-group">
+          <label class="filter-label">Brand</label>
+          <select class="filter-select" [(ngModel)]="selectedBrand" (change)="onFilterChange()">
+            <option value="">All Brands</option>
+            <option *ngFor="let brand of filterOptions.brands" [value]="brand">
+              {{ brand }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Color</label>
+          <select class="filter-select" [(ngModel)]="selectedColor" (change)="onFilterChange()">
+            <option value="">All Colors</option>
+            <option *ngFor="let color of filterOptions.colors" [value]="color">
+              {{ color }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Gender</label>
+          <select class="filter-select" [(ngModel)]="selectedGender" (change)="onFilterChange()">
+            <option value="">All</option>
+            <option *ngFor="let gender of filterOptions.genders" [value]="gender">
+              {{ gender }}
+            </option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Price Range</label>
+          <div class="price-inputs">
+            <input 
+              type="number" 
+              class="price-input" 
+              placeholder="Min"
+              [(ngModel)]="minPrice"
+              (change)="onFilterChange()"
+            />
+            <span class="price-separator">-</span>
+            <input 
+              type="number" 
+              class="price-input" 
+              placeholder="Max"
+              [(ngModel)]="maxPrice"
+              (change)="onFilterChange()"
+            />
+          </div>
+        </div>
+
+        <button 
+          class="clear-filters-btn" 
+          (click)="clearFilters()"
+          *ngIf="hasActiveFilters"
+        >
+          Clear All Filters
+        </button>
+      </div>
+    </aside>
+
+    <div class="products-section">
+      <div class="results-header">
+        <div class="results-info">
+          <h2>{{ resultsCount }} Products Found</h2>
+          <p *ngIf="hasActiveFilters" class="active-filters-note">Filters applied</p>
+        </div>
+
+        <div class="sort-container">
+          <label class="sort-label">Sort by:</label>
+          <select class="sort-select" [(ngModel)]="sortBy" (change)="onSortChange()">
+            <option value="name_asc">Name (A-Z)</option>
+            <option value="name_desc">Name (Z-A)</option>
+            <option value="price_asc">Price (Low to High)</option>
+            <option value="price_desc">Price (High to Low)</option>
+            <option value="newest">Newest First</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="products-grid" *ngIf="filteredProducts.length > 0; else noResults">
+        <div *ngFor="let prod of filteredProducts" class="product-card">
+          <div class="product-badges">
+            <span *ngIf="prod.isNewArrival" class="badge new">New</span>
+            <span *ngIf="prod.isBestSeller" class="badge bestseller">Best Seller</span>
+            <span *ngIf="prod.discountPercentage > 0" class="badge discount">
+              -{{ prod.discountPercentage }}%
+            </span>
+            <span *ngIf="isOutOfStock(prod)" class="badge out-of-stock">Out of Stock</span>
+          </div>
+
+          <div class="product-image-wrapper">
+            <img 
+              class="product-image" 
+              [src]="'assets/products/' + prod.imageFile + '.jpg'" 
+              [alt]="prod.name"
+              loading="lazy"
+            />
+          </div>
+          
+          <div class="product-info">
+            <div class="product-header">
+              <h3 class="product-name">{{ prod.name }}</h3>
+              <span *ngIf="prod.brand" class="product-brand">{{ prod.brand }}</span>
             </div>
 
-            <!-- Image -->
-            <div class="product-image-wrapper">
-              <img 
-                class="product-image" 
-                [src]="'assets/products/' + prod.imageFile + '.jpg'" 
-                [alt]="prod.name"
-                loading="lazy"
-              />
-            </div>
+            <p class="product-description">{{ prod.description }}</p>
             
-            <!-- Info -->
-            <div class="product-info">
-              <div class="product-header">
-                <h3 class="product-name">{{ prod.name }}</h3>
-                <span *ngIf="prod.brand" class="product-brand">{{ prod.brand }}</span>
-              </div>
+            <div *ngIf="prod.rating > 0" class="product-rating">
+              <span class="stars">★ {{ prod.rating }}</span>
+              <span class="review-count">({{ prod.reviewCount }} reviews)</span>
+            </div>
 
-              <p class="product-description">{{ prod.description }}</p>
-              
-              <!-- Rating -->
-              <div *ngIf="prod.rating > 0" class="product-rating">
-                <span class="stars">★ {{ prod.rating }}</span>
-                <span class="review-count">({{ prod.reviewCount }} reviews)</span>
-              </div>
+            <div class="product-meta">
+              <span *ngIf="prod.color" class="meta-item">
+                <span class="color-dot" [style.backgroundColor]="prod.color"></span>
+                {{ prod.color }}
+              </span>
+              <span *ngIf="prod.gender" class="meta-item">{{ prod.gender }}</span>
+              <span *ngIf="prod.categoryName" class="meta-item">{{ prod.categoryName }}</span>
+            </div>
 
-              <!-- Meta -->
-              <div class="product-meta">
-                <span *ngIf="prod.color" class="meta-item">
-                  <span class="color-dot" [style.backgroundColor]="prod.color"></span>
-                  {{ prod.color }}
+            <div class="product-footer">
+              <div class="price-container">
+                <span *ngIf="prod.discountPercentage > 0" class="product-price-original">
+                  <s>₱{{ prod.price }}</s>
                 </span>
-                <span *ngIf="prod.gender" class="meta-item">{{ prod.gender }}</span>
-                <span *ngIf="prod.unitOfMeasure" class="meta-item">{{ prod.unitOfMeasure }}</span>
+                <span class="product-price">
+                  ₱{{ formatPrice(calculateDiscountedPrice(prod)) }}
+                </span>
               </div>
 
-              <!-- Price + Button -->
-              <div class="product-footer">
-                <div class="price-container">
-                  <span *ngIf="prod.discountPercentage > 0" class="product-price-original">
-                    <s>₱{{ prod.price }}</s>
-                  </span>
-                  <span class="product-price">
-                    ₱{{ formatPrice(calculateDiscountedPrice(prod)) }}
-                  </span>
-                </div>
+              <button 
+                class="add-to-cart-btn"
+                (click)="addToCart(prod, $event)"
+                [disabled]="isOutOfStock(prod)"
+                [class.disabled]="isOutOfStock(prod)"
+                aria-label="Add to cart"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2">
+                  <circle cx="9" cy="21" r="1"/>
+                  <circle cx="20" cy="21" r="1"/>
+                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                </svg>
+                {{ isOutOfStock(prod) ? 'Out of Stock' : 'Add to Cart' }}
+              </button>
+            </div>
 
-                <button 
-                  class="add-to-cart-btn"
-                  (click)="addToCart(prod, $event)"
-                  [disabled]="isOutOfStock(prod)"
-                  [class.disabled]="isOutOfStock(prod)"
-                  aria-label="Add to cart"
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                       stroke="currentColor" stroke-width="2">
-                    <circle cx="9" cy="21" r="1"/>
-                    <circle cx="20" cy="21" r="1"/>
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                  </svg>
-                  {{ isOutOfStock(prod) ? 'Out of Stock' : 'Add to Cart' }}
-                </button>
-              </div>
-
-              <!-- Stock warning -->
-              <div *ngIf="!isOutOfStock(prod) && prod.stockQuantity <= 5" class="stock-warning">
-                Only {{ prod.stockQuantity }} left in stock!
-              </div>
+            <div *ngIf="!isOutOfStock(prod) && prod.stockQuantity <= 5" class="stock-warning">
+              Only {{ prod.stockQuantity }} left in stock!
             </div>
           </div>
         </div>
       </div>
-    </ng-container>
+
+      <ng-template #noResults>
+        <div class="no-results">
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="#9c6644" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="m21 21-4.35-4.35"/>
+          </svg>
+          <h3>No products found</h3>
+          <p>Try adjusting your filters or search term</p>
+          <button class="clear-filters-btn" (click)="clearFilters()">Clear Filters</button>
+        </div>
+      </ng-template>
+    </div>
   </div>
 </div>
 
 <ng-template #loading>
   <div class="loading-state">
+    <div class="spinner"></div>
     <p>Loading products...</p>
   </div>
 </ng-template>

@@ -1,5 +1,7 @@
 package com.bautista.serviceimpl;
 
+import com.bautista.dto.FilterOptions;
+import com.bautista.dto.ProductSearchRequest;
 import com.bautista.entity.ProductData;
 import com.bautista.model.Product;
 import com.bautista.model.ProductCategory;
@@ -8,9 +10,12 @@ import com.bautista.service.ProductService;
 import com.bautista.util.Transform;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.criteria.Predicate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -19,19 +24,110 @@ public class ProductServiceImpl implements ProductService {
     @Autowired
     ProductDataRepository productDataRepository;
 
-    Transform< ProductData, Product> transformProductData = new Transform<>(Product.class);
-
+    Transform<ProductData, Product> transformProductData = new Transform<>(Product.class);
     Transform<Product, ProductData> transformProduct = new Transform<>(ProductData.class);
 
+    @Override
+    public List<Product> searchProducts(ProductSearchRequest request) {
+        log.info("Searching products with request: {}", request);
+
+        Specification<ProductData> spec = (root, query, cb) -> {
+            List<Predicate> predicates = new ArrayList<>();
+
+            // Search query (name or description)
+            if (request.getQuery() != null && !request.getQuery().trim().isEmpty()) {
+                String searchPattern = "%" + request.getQuery().toLowerCase() + "%";
+                Predicate namePredicate = cb.like(cb.lower(root.get("name")), searchPattern);
+                Predicate descPredicate = cb.like(cb.lower(root.get("description")), searchPattern);
+                predicates.add(cb.or(namePredicate, descPredicate));
+            }
+
+            // Category filter
+            if (request.getCategory() != null && !request.getCategory().trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("categoryName"), request.getCategory()));
+            }
+
+            // Brand filter
+            if (request.getBrand() != null && !request.getBrand().trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("brand"), request.getBrand()));
+            }
+
+            // Color filter
+            if (request.getColor() != null && !request.getColor().trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("color"), request.getColor()));
+            }
+
+            // Gender filter
+            if (request.getGender() != null && !request.getGender().trim().isEmpty()) {
+                predicates.add(cb.equal(root.get("gender"), request.getGender()));
+            }
+
+            // Price range filters
+            if (request.getMinPrice() != null) {
+                predicates.add(cb.greaterThanOrEqualTo(root.get("price"), request.getMinPrice()));
+            }
+            if (request.getMaxPrice() != null) {
+                predicates.add(cb.lessThanOrEqualTo(root.get("price"), request.getMaxPrice()));
+            }
+
+            return cb.and(predicates.toArray(new Predicate[0]));
+        };
+
+        List<ProductData> productDataList = productDataRepository.findAll(spec);
+
+        // Sort the results
+        productDataList = sortProducts(productDataList, request.getSortBy());
+
+        // Transform to Product model
+        return productDataList.stream()
+                .map(pd -> transformProductData.transform(pd))
+                .collect(Collectors.toList());
+    }
+
+    private List<ProductData> sortProducts(List<ProductData> products, String sortBy) {
+        if (sortBy == null || sortBy.isEmpty()) {
+            sortBy = "name_asc";
+        }
+
+        switch (sortBy.toLowerCase()) {
+            case "price_asc":
+                products.sort(Comparator.comparing(ProductData::getPrice));
+                break;
+            case "price_desc":
+                products.sort(Comparator.comparing(ProductData::getPrice).reversed());
+                break;
+            case "name_desc":
+                products.sort(Comparator.comparing(ProductData::getName).reversed());
+                break;
+            case "newest":
+                products.sort(Comparator.comparing(ProductData::getCreated).reversed());
+                break;
+            case "name_asc":
+            default:
+                products.sort(Comparator.comparing(ProductData::getName));
+                break;
+        }
+        return products;
+    }
+
+    @Override
+    public FilterOptions getFilterOptions() {
+        FilterOptions options = new FilterOptions();
+        options.setCategories(productDataRepository.findDistinctCategories());
+        options.setBrands(productDataRepository.findDistinctBrands());
+        options.setColors(productDataRepository.findDistinctColors());
+        options.setGenders(productDataRepository.findDistinctGenders());
+        return options;
+    }
 
     public List<Product> getAllProducts() {
-        List<ProductData>productDataRecords = new ArrayList<>();
-        List<Product> products =  new ArrayList<>();
+        List<ProductData> productDataRecords = new ArrayList<>();
+        List<Product> products = new ArrayList<>();
 
         productDataRepository.findAll().forEach(productDataRecords::add);
         Iterator<ProductData> it = productDataRecords.iterator();
 
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             Product product = new Product();
             ProductData productData = it.next();
             product = transformProductData.transform(productData);
@@ -39,38 +135,37 @@ public class ProductServiceImpl implements ProductService {
         }
         return products;
     }
+
     @Override
-    public List<ProductCategory> listProductCategories()
-    {
-        Map<String,List<Product>> mappedProduct = getCategoryMappedProducts();
+    public List<ProductCategory> listProductCategories() {
+        Map<String, List<Product>> mappedProduct = getCategoryMappedProducts();
         List<ProductCategory> productCategories = new ArrayList<>();
-        for(String categoryName: mappedProduct.keySet()){
-            ProductCategory productCategory =  new ProductCategory();
+        for (String categoryName : mappedProduct.keySet()) {
+            ProductCategory productCategory = new ProductCategory();
             productCategory.setCategoryName(categoryName);
             productCategory.setProducts(mappedProduct.get(categoryName));
             productCategories.add(productCategory);
         }
         return productCategories;
     }
-    @Override
-    public Map<String,List<Product>> getCategoryMappedProducts()
-    {
-        Map<String,List<Product>> mapProducts = new HashMap<String,List<Product>>();
 
-        List<ProductData>productDataRecords = new ArrayList<>();
+    @Override
+    public Map<String, List<Product>> getCategoryMappedProducts() {
+        Map<String, List<Product>> mapProducts = new HashMap<String, List<Product>>();
+
+        List<ProductData> productDataRecords = new ArrayList<>();
         List<Product> products;
 
         productDataRepository.findAll().forEach(productDataRecords::add);
         Iterator<ProductData> it = productDataRecords.iterator();
 
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             Product product = new Product();
             ProductData productData = it.next();
 
-            if(mapProducts.containsKey(productData.getCategoryName())){
+            if (mapProducts.containsKey(productData.getCategoryName())) {
                 products = mapProducts.get(productData.getCategoryName());
-            }
-            else {
+            } else {
                 products = new ArrayList<Product>();
                 mapProducts.put(productData.getCategoryName(), products);
             }
@@ -82,69 +177,69 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product[] getAll() {
-            List<ProductData> productsData = new ArrayList<>();
-            List<Product> products = new ArrayList<>();
-            productDataRepository.findAll().forEach(productsData::add);
-            Iterator<ProductData> it = productsData.iterator();
-            while(it.hasNext()) {
-                ProductData productData = it.next();
-                Product product =  transformProductData.transform(productData);
-                products.add(product);
-            }
-            Product[] array = new Product[products.size()];
-            for  (int i=0; i<products.size(); i++){
-                array[i] = products.get(i);
-            }
-            return array;
+        List<ProductData> productsData = new ArrayList<>();
+        List<Product> products = new ArrayList<>();
+        productDataRepository.findAll().forEach(productsData::add);
+        Iterator<ProductData> it = productsData.iterator();
+        while (it.hasNext()) {
+            ProductData productData = it.next();
+            Product product = transformProductData.transform(productData);
+            products.add(product);
         }
+        Product[] array = new Product[products.size()];
+        for (int i = 0; i < products.size(); i++) {
+            array[i] = products.get(i);
+        }
+        return array;
+    }
+
     @Override
     public Product get(Integer id) {
-        log.info(" Input id >> "+  Integer.toString(id) );
+        log.info(" Input id >> " + Integer.toString(id));
         Product product = null;
         Optional<ProductData> optional = productDataRepository.findById(id);
-        if(optional.isPresent()) {
+        if (optional.isPresent()) {
             log.info(" Is present >> ");
             product = new Product();
             product.setId(optional.get().getId());
             product.setName(optional.get().getName());
-        }
-        else {
-            log.info(" Failed >> unable to locate id: " +  Integer.toString(id)  );
+        } else {
+            log.info(" Failed >> unable to locate id: " + Integer.toString(id));
         }
         return product;
     }
-        @Override
-        public Product create(Product product) {
-            log.info(" add:Input " + product.toString());
-            ProductData productData = transformProduct.transform(product);
-            ProductData updatedProductData = productDataRepository.save(productData);
-            log.info(" add:Input {}", productData.toString());
-            return  transformProductData.transform(updatedProductData);
-        }
 
-        @Override
-        public Product update(Product product) {
-            Optional<ProductData> optional  = productDataRepository.findById(product.getId());
-            if(optional.isPresent()){
-                ProductData productData = transformProduct.transform(product);
-                ProductData updaatedProductData = productDataRepository.save( productData);
-                return transformProductData.transform(updaatedProductData);
-            }
-            else {
-                log.error("Product record with id: {} do not exist",product.getId());
-            }
-            return null;
+    @Override
+    public Product create(Product product) {
+        log.info(" add:Input " + product.toString());
+        ProductData productData = transformProduct.transform(product);
+        ProductData updatedProductData = productDataRepository.save(productData);
+        log.info(" add:Input {}", productData.toString());
+        return transformProductData.transform(updatedProductData);
+    }
+
+    @Override
+    public Product update(Product product) {
+        Optional<ProductData> optional = productDataRepository.findById(product.getId());
+        if (optional.isPresent()) {
+            ProductData productData = transformProduct.transform(product);
+            ProductData updaatedProductData = productDataRepository.save(productData);
+            return transformProductData.transform(updaatedProductData);
+        } else {
+            log.error("Product record with id: {} do not exist", product.getId());
         }
+        return null;
+    }
+
     @Override
     public void delete(Integer id) {
-        log.info(" Input >> {}",id);
+        log.info(" Input >> {}", id);
         Optional<ProductData> optional = productDataRepository.findById(id);
-        if( optional.isPresent()) {
+        if (optional.isPresent()) {
             ProductData productDatum = optional.get();
             productDataRepository.delete(optional.get());
-            log.info(" Successfully deleted Product record with id: {}",id);
-        }
-        else {
+            log.info(" Successfully deleted Product record with id: {}", id);
+        } else {
             log.error(" Unable to locate product with id: {}", id);
         }
     }
