@@ -20,6 +20,15 @@
                 </span>
             </button>
             
+            <button 
+                *ngIf="currentUser && isAdmin()"
+                class="nav-button admin-btn"
+                routerLink="/admin"
+                [routerLinkActive]="'active'"
+            >
+                 Admin
+            </button>
+            
             <ng-container *ngIf="!currentUser">
                 <button class="nav-button" routerLink="/signup">
                     Sign Up

@@ -22,4 +22,9 @@ public interface ProductDataRepository extends JpaRepository<ProductData, Intege
     @Query("SELECT DISTINCT p.gender FROM ProductData p WHERE p.gender IS NOT NULL")
     List<String> findDistinctGenders();
 
+    Long countByStockQuantity(Integer stockQuantity);
+
+    Long countByStockQuantityLessThanEqual(Integer stockQuantity);
+
+    List<ProductData> findByStockQuantityLessThanEqual(Integer stockQuantity);
 }

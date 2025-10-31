@@ -3,6 +3,41 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Order, CheckoutRequest } from '../model/order';
 
+export interface OrderItem {
+  id: number;
+  productId: number;
+  productName: string;
+  productImage: string;
+  productPrice: number;
+  quantity: number;
+  subtotal: number;
+  productColor: string;
+  productSize: string;
+  productBrand: string;
+  status: string;
+}
+
+export interface OrderDTO {
+  id: number;
+  orderNumber: string;
+  userId: number;
+  customerName: string;
+  customerEmail: string;
+  customerPhone: string;
+  shippingAddress: string;
+  shippingCity: string;
+  shippingProvince: string;
+  shippingPostalCode: string;
+  totalAmount: number;
+  totalItems: number;
+  paymentMethod: string;
+  status: string;
+  notes: string;
+  orderDate: string;
+  lastUpdated: string;
+  orderItems: OrderItem[];
+}
+
 @Injectable({
   providedIn: 'root'
 })

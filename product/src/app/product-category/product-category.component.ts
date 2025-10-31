@@ -9,8 +9,6 @@ import { Product } from '../model/product';
 
 @Component({
   selector: 'app-product-category',
-  standalone: true,
-  imports: [CommonModule, FormsModule],
   templateUrl: './product-category.component.html',
   styleUrls: ['./product-category.component.css']
 })

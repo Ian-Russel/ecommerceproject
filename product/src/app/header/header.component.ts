@@ -60,6 +60,12 @@ export class HeaderComponent implements OnInit {
     }
   }
 
+  isAdmin(): boolean {
+    return this.currentUser?.role?.toLowerCase() === 'admin';
+  }
+
+
+
   onSearchKeyPress(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
       this.onSearch();

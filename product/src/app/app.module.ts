@@ -1,29 +1,32 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-
+import { HttpClientModule } from '@angular/common/http';
+import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HeaderComponent } from './header/header.component';
-import { FooterComponent } from './footer/footer.component';
+
 import { MainBodyComponent } from './main-body/main-body.component';
-import { MainHeaderComponent } from './main-header/main-header.component';
-import { GalleryComponent } from './gallery/gallery.component';
-import { XboxComponent } from './xbox/xbox.component';
 import { ProductCategoryComponent } from './product-category/product-category.component';
+import { LoginComponent } from './login/login.component';
+import { SignupComponent } from './signup/signup.component';
 import { ShoppingCartComponent } from './shopping-cart/shopping-cart.component';
+import { CheckoutComponent } from './checkout/checkout.component';
+import { OrderSuccessComponent } from './order-success/order-success.component';
 import { ProductOrderComponent } from './product-order/product-order.component';
 import { CustomerServiceComponent } from './customer-service/customer-service.component';
 import { CompanyHomeComponent } from './company-home/company-home.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
-import { LoginComponent } from './login/login.component';
-import { SignupComponent } from './signup/signup.component';
-import { CheckoutComponent } from './checkout/checkout.component';
-import { OrderSuccessComponent } from './order-success/order-success.component';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { AdminOrdersComponent } from './admin-orders/admin-orders.component';
+import { HeaderComponent } from './header/header.component';
+import { FooterComponent } from './footer/footer.component';
 import { FilterPipe } from './pipes/filter.pipe';
+
+import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
+
 
 @NgModule({
   declarations: [
@@ -31,32 +34,29 @@ import { FilterPipe } from './pipes/filter.pipe';
     HeaderComponent,
     FooterComponent,
     MainBodyComponent,
-    MainHeaderComponent,
-    GalleryComponent,
-    XboxComponent,
+    LoginComponent,
+    SignupComponent,
     ShoppingCartComponent,
+    CheckoutComponent,
+    OrderSuccessComponent,
     ProductOrderComponent,
     CustomerServiceComponent,
     CompanyHomeComponent,
     ContactUsComponent,
-    LoginComponent,
-    SignupComponent,
-    CheckoutComponent,
-    OrderSuccessComponent,
-    CheckoutComponent,
-    OrderSuccessComponent,
-    FilterPipe
+    FilterPipe,
+    ProductCategoryComponent,
+    AdminDashboardComponent,
+    AdminOrdersComponent
   ],
   imports: [
-    ProductCategoryComponent,
     BrowserModule,
     CommonModule,
-    RouterModule,
-    AppRoutingModule,
+    FormsModule,
     HttpClientModule,
-    FormsModule
+    RouterModule,
+    AppRoutingModule
   ],
-  providers: [],
+  providers: [AuthGuard, AdminGuard],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

@@ -1,0 +1,199 @@
+<div class="admin-dashboard" *ngIf="!isLoading; else loading">
+  <div class="dashboard-header">
+    <div class="header-content">
+      <h1>Admin Dashboard</h1>
+      <p class="subtitle">Manage your BautistaCorp platform</p>
+    </div>
+  </div>
+
+  <div class="tab-navigation">
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'overview'"
+      (click)="switchTab('overview')"
+    >
+      Overview
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'orders'"
+      (click)="switchTab('orders')"
+    >
+      Orders
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'products'"
+      (click)="switchTab('products')"
+    >
+      Products
+    </button>
+    <button 
+      class="tab-btn" 
+      [class.active]="activeTab === 'customers'"
+      (click)="switchTab('customers')"
+    >
+      Customers
+    </button>
+  </div>
+
+  <div class="tab-content" *ngIf="activeTab === 'overview' && stats">
+    <div class="stats-grid">
+      <div class="stat-card revenue">
+        <div class="stat-icon">💰</div>
+        <div class="stat-info">
+          <h3>{{ formatCurrency(stats.totalRevenue) }}</h3>
+          <p>Total Revenue</p>
+        </div>
+      </div>
+
+      <div class="stat-card orders">
+        <div class="stat-icon">📦</div>
+        <div class="stat-info">
+          <h3>{{ stats.totalOrders }}</h3>
+          <p>Total Orders</p>
+          <span class="stat-detail">{{ stats.pendingOrders }} pending</span>
+        </div>
+      </div>
+
+      <div class="stat-card products">
+        <div class="stat-icon">🛍️</div>
+        <div class="stat-info">
+          <h3>{{ stats.totalProducts }}</h3>
+          <p>Total Products</p>
+          <span class="stat-detail warning" *ngIf="stats.lowStockProducts > 0">
+            {{ stats.lowStockProducts }} low stock
+          </span>
+        </div>
+      </div>
+
+      <div class="stat-card customers">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <h3>{{ stats.totalCustomers }}</h3>
+          <p>Total Customers</p>
+          <span class="stat-detail">+{{ stats.newCustomersThisMonth }} this month</span>
+        </div>
+      </div>
+
+      <div class="stat-card average">
+        <div class="stat-icon">📈</div>
+        <div class="stat-info">
+          <h3>{{ formatCurrency(stats.averageOrderValue) }}</h3>
+          <p>Average Order Value</p>
+        </div>
+      </div>
+
+      <div class="stat-card completed">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <h3>{{ stats.completedOrders }}</h3>
+          <p>Completed Orders</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="quick-actions">
+      <h2>Quick Actions</h2>
+      <div class="action-buttons">
+        <button class="action-btn" (click)="navigateToOrders()">
+          <span class="btn-icon">📋</span>
+          <span class="btn-text">View All Orders</span>
+        </button>
+        <button class="action-btn" (click)="navigateToProducts()">
+          <span class="btn-icon">📦</span>
+          <span class="btn-text">Manage Products</span>
+        </button>
+        <button class="action-btn" (click)="navigateToCustomers()">
+          <span class="btn-icon">👤</span>
+          <span class="btn-text">View Customers</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="alerts-section" *ngIf="stats.lowStockProducts > 0 || stats.outOfStockProducts > 0">
+      <h2>⚠️ Alerts</h2>
+      <div class="alerts-grid">
+        <div class="alert-card warning" *ngIf="stats.lowStockProducts > 0">
+          <h4>Low Stock Alert</h4>
+          <p>{{ stats.lowStockProducts }} products have low stock (≤5 items)</p>
+          <button class="alert-btn" (click)="navigateToProducts()">View Products</button>
+        </div>
+        <div class="alert-card danger" *ngIf="stats.outOfStockProducts > 0">
+          <h4>Out of Stock</h4>
+          <p>{{ stats.outOfStockProducts }} products are out of stock</p>
+          <button class="alert-btn" (click)="navigateToProducts()">Restock Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Orders Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'orders'">
+    <div class="section-header">
+      <h2>Order Management</h2>
+      <button class="primary-btn" (click)="navigateToOrders()">View All Orders</button>
+    </div>
+    <p class="coming-soon">Full order management interface coming soon. Use "View All Orders" to see the complete list.</p>
+  </div>
+
+  <!-- Products Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'products'">
+    <div class="section-header">
+      <h2>Product Management</h2>
+      <button class="primary-btn" (click)="navigateToProducts()">Manage Products</button>
+    </div>
+    <p class="coming-soon">Full product management interface coming soon.</p>
+  </div>
+
+  <!-- Customers Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'customers'">
+    <div class="section-header">
+      <h2>Customer List</h2>
+      <span class="customer-count">{{ customers.length }} customers</span>
+    </div>
+    
+    <div class="customers-table" *ngIf="customers.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Joined Date</th>
+            <th>Last Login</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let customer of customers">
+            <td>#{{ customer.id }}</td>
+            <td>{{ customer.firstName }} {{ customer.lastName }}</td>
+            <td>{{ customer.email }}</td>
+            <td>{{ customer.phoneNumber || 'N/A' }}</td>
+            <td>{{ formatDate(customer.createdAt) }}</td>
+            <td>{{ formatDate(customer.lastLogin) }}</td>
+            <td>
+              <span class="status-badge" [class.active]="customer.isActive">
+                {{ customer.isActive ? 'Active' : 'Inactive' }}
+              </span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="no-data" *ngIf="customers.length === 0">
+      <p>No customers found</p>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading dashboard...</p>
+  </div>
+</ng-template>

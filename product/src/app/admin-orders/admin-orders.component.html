@@ -1,0 +1,217 @@
+<div class="admin-orders" *ngIf="!isLoading; else loading">
+  <div class="page-header">
+    <h1>📦 Order Management</h1>
+    <p>View and manage all customer orders</p>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="search-box">
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search by order number, customer name, or email..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange()"
+      />
+    </div>
+
+    <div class="filter-group">
+      <label>Filter by Status:</label>
+      <select
+        class="filter-select"
+        [(ngModel)]="filterStatus"
+        (change)="onFilterChange()"
+      >
+        <option *ngFor="let option of statusOptions" [value]="option.value">
+          {{ option.label }}
+        </option>
+      </select>
+    </div>
+
+    <div class="results-info">
+      <span class="result-count">{{ filteredOrders.length }} orders</span>
+    </div>
+  </div>
+
+  <!-- Orders Table -->
+  <div class="orders-table" *ngIf="filteredOrders.length > 0; else noOrders">
+    <table>
+      <thead>
+        <tr>
+          <th>Order #</th>
+          <th>Customer</th>
+          <th>Date</th>
+          <th>Items</th>
+          <th>Total</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let order of filteredOrders">
+          <td class="order-number">{{ order.orderNumber }}</td>
+
+          <td>
+            <div class="customer-info">
+              <strong>{{ order.customerName }}</strong>
+              <span class="customer-email">{{ order.customerEmail }}</span>
+            </div>
+          </td>
+
+          <td>{{ order.orderDate | date: 'mediumDate' }}</td>
+
+          <td class="text-center">{{ order.totalItems }}</td>
+          <td class="amount">{{ formatCurrency(order.totalAmount) }}</td>
+
+          <td>
+            <span class="status-badge" [ngClass]="getStatusClass(order.status)">
+              {{ order.status }}
+            </span>
+          </td>
+
+          <td class="actions">
+            <button class="btn-view" (click)="viewOrderDetails(order)">
+              View
+            </button>
+
+            <select
+              class="status-select"
+              [value]="order.status"
+              (change)="updateStatus(order, $any($event.target).value)"
+            >
+              <option value="Pending">Pending</option>
+              <option value="Processing">Processing</option>
+              <option value="Shipped">Shipped</option>
+              <option value="Delivered">Delivered</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <ng-template #noOrders>
+    <div class="no-orders">
+      <p>No orders found</p>
+    </div>
+  </ng-template>
+</div>
+
+<!-- Order Details Modal -->
+<div class="modal-overlay" *ngIf="selectedOrder" (click)="closeOrderDetails()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Order Details</h2>
+      <button class="close-btn" (click)="closeOrderDetails()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <div class="order-info-grid">
+        <div class="info-group">
+          <label>Order Number:</label>
+          <span class="value">{{ selectedOrder.orderNumber }}</span>
+        </div>
+
+        <div class="info-group">
+          <label>Order Date:</label>
+          <span class="value">{{ selectedOrder.orderDate | date: 'mediumDate' }}</span>
+        </div>
+
+        <div class="info-group">
+          <label>Status:</label>
+          <span class="status-badge" [ngClass]="getStatusClass(selectedOrder.status)">
+            {{ selectedOrder.status }}
+          </span>
+        </div>
+
+        <div class="info-group">
+          <label>Payment Method:</label>
+          <span class="value">{{ selectedOrder.paymentMethod }}</span>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <h3>Customer Information</h3>
+      <div class="order-info-grid">
+        <div class="info-group">
+          <label>Name:</label>
+          <span class="value">{{ selectedOrder.customerName }}</span>
+        </div>
+        <div class="info-group">
+          <label>Email:</label>
+          <span class="value">{{ selectedOrder.customerEmail }}</span>
+        </div>
+        <div class="info-group">
+          <label>Phone:</label>
+          <span class="value">{{ selectedOrder.customerPhone }}</span>
+        </div>
+      </div>
+
+      <div class="section-divider"></div>
+
+      <h3>Shipping Address</h3>
+      <p class="address">
+        {{ selectedOrder.shippingAddress }}<br />
+        {{ selectedOrder.shippingCity }},
+        {{ selectedOrder.shippingProvince }}
+        {{ selectedOrder.shippingPostalCode }}
+      </p>
+
+      <div class="section-divider"></div>
+
+      <h3>Order Items</h3>
+      <div class="items-list">
+        <div class="item-card" *ngFor="let item of selectedOrder.orderItems">
+          <img
+            [src]="'assets/products/' + item.productImage + '.jpg'"
+            [alt]="item.productName"
+            class="item-image"
+          />
+
+          <div class="item-details">
+            <h4>{{ item.productName }}</h4>
+            <p class="item-meta">
+              <span *ngIf="item.productBrand">{{ item.productBrand }}</span>
+              <span *ngIf="item.productColor"> • {{ item.productColor }}</span>
+            </p>
+            <p class="item-price">₱{{ item.productPrice }} × {{ item.quantity }}</p>
+          </div>
+
+          <div class="item-total">
+            {{ formatCurrency(item.subtotal) }}
+          </div>
+        </div>
+      </div>
+
+      <div class="order-summary">
+        <div class="summary-row">
+          <span>Total Items:</span>
+          <strong>{{ selectedOrder.totalItems }}</strong>
+        </div>
+
+        <div class="summary-row total">
+          <span>Total Amount:</span>
+          <strong>{{ formatCurrency(selectedOrder.totalAmount) }}</strong>
+        </div>
+      </div>
+
+      <div *ngIf="selectedOrder.notes" class="notes-section">
+        <h4>Notes:</h4>
+        <p>{{ selectedOrder.notes }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading Template -->
+<ng-template #loading>
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading orders...</p>
+  </div>
+</ng-template>

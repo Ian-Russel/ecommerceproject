@@ -12,6 +12,9 @@ import { CustomerServiceComponent } from './customer-service/customer-service.co
 import { CompanyHomeComponent } from './company-home/company-home.component';
 import { ContactUsComponent } from './contact-us/contact-us.component';
 import { AuthGuard } from './guards/auth.guard';
+import { AdminGuard } from './guards/admin.guard';
+import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { AdminOrdersComponent } from './admin-orders/admin-orders.component';
 
 const routes: Routes = [
   { path: '', component: MainBodyComponent },
@@ -20,7 +23,6 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'signup', component: SignupComponent },
   
-  // Require login
   { 
     path: 'cart', 
     component: ShoppingCartComponent,
@@ -42,7 +44,16 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   
-  // No login needed
+  {
+    path: 'admin',
+    canActivate: [AdminGuard],
+    children: [
+      { path: '', component: AdminDashboardComponent },
+      { path: 'dashboard', component: AdminDashboardComponent },
+      { path: 'orders', component: AdminOrdersComponent },
+    ]
+  }, 
+
   { path: 'customer', component: CustomerServiceComponent },
   { path: 'company', component: CompanyHomeComponent },
   { path: 'contact', component: ContactUsComponent },
