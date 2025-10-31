@@ -15,6 +15,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
 import { AdminOrdersComponent } from './admin-orders/admin-orders.component';
+import { AdminProductsComponent } from './admin-products/admin-products.component';
 
 const routes: Routes = [
   { path: '', component: MainBodyComponent },
@@ -51,6 +52,7 @@ const routes: Routes = [
       { path: '', component: AdminDashboardComponent },
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'orders', component: AdminOrdersComponent },
+      { path: 'products', component: AdminProductsComponent }
     ]
   }, 
 

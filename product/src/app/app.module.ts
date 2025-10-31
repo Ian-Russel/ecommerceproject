@@ -26,6 +26,7 @@ import { FilterPipe } from './pipes/filter.pipe';
 
 import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
+import { AdminProductsComponent } from './admin-products/admin-products.component';
 
 
 @NgModule({
@@ -46,7 +47,8 @@ import { AdminGuard } from './guards/admin.guard';
     FilterPipe,
     ProductCategoryComponent,
     AdminDashboardComponent,
-    AdminOrdersComponent
+    AdminOrdersComponent,
+    AdminProductsComponent
   ],
   imports: [
     BrowserModule,

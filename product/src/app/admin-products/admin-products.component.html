@@ -1,0 +1,418 @@
+<div class="admin-products" *ngIf="!isLoading; else loading">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <h1>Product Management</h1>
+      <p>Manage your product inventory</p>
+    </div>
+    <button class="btn-create" (click)="openCreateModal()">
+      + Add New Product
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filters-section">
+    <div class="search-box">
+      <input 
+        type="text" 
+        class="search-input" 
+        placeholder="Search by name, brand, or SKU..."
+        [(ngModel)]="searchQuery"
+        (input)="onSearchChange()"
+      />
+    </div>
+
+    <div class="filter-group">
+      <label>Status:</label>
+      <select class="filter-select" [(ngModel)]="filterStatus" (change)="onFilterChange()">
+        <option value="all">All Products</option>
+        <option value="active">In Stock</option>
+        <option value="low-stock">Low Stock</option>
+        <option value="out-of-stock">Out of Stock</option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Category:</label>
+      <select class="filter-select" [(ngModel)]="filterCategory" (change)="onFilterChange()">
+        <option value="all">All Categories</option>
+        <option *ngFor="let category of categories" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+    </div>
+
+    <div class="results-info">
+      <span class="result-count">{{ filteredProducts.length }} products</span>
+    </div>
+  </div>
+
+  <!-- Products Table -->
+  <div class="products-table" *ngIf="filteredProducts.length > 0; else noProducts">
+    <table>
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Product Name</th>
+          <th>Category</th>
+          <th>Brand</th>
+          <th>Price</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of filteredProducts">
+          <td>
+            <img 
+              [src]="'assets/products/' + product.imageFile + '.jpg'" 
+              [alt]="product.name"
+              class="product-thumbnail"
+            />
+          </td>
+          <td>
+            <div class="product-info">
+              <strong>{{ product.name }}</strong>
+              <span class="product-sku" *ngIf="product.sku">SKU: {{ product.sku }}</span>
+            </div>
+          </td>
+          <td>{{ product.categoryName }}</td>
+          <td>{{ product.brand || 'N/A' }}</td>
+          <td class="price">{{ formatCurrency(product.price) }}</td>
+          <td class="text-center">
+            <span class="stock-value" [ngClass]="getStockClass(product.stockQuantity)">
+              {{ product.stockQuantity }}
+            </span>
+          </td>
+          <td>
+            <span class="status-badge" [ngClass]="getStockClass(product.stockQuantity)">
+              {{ getStockLabel(product.stockQuantity) }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="btn-action btn-edit" (click)="openEditModal(product)" title="Edit">
+              Edit
+            </button>
+            <button class="btn-action btn-stock" (click)="openStockModal(product)" title="Update Stock">
+              Update Stock
+            </button>
+            <button class="btn-action btn-delete" (click)="deleteProduct(product)" title="Delete">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- No Products Message -->
+  <ng-template #noProducts>
+    <div class="no-products">
+      <p>No products found</p>
+      <button class="btn-create" (click)="openCreateModal()">
+        + Add Your First Product
+      </button>
+    </div>
+  </ng-template>
+</div>
+
+<!-- Product Modal (Create/Edit) -->
+<div class="modal-overlay" *ngIf="showProductModal" (click)="closeProductModal()">
+  <div class="modal-content modal-large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h2>
+      <button class="close-btn" (click)="closeProductModal()">×</button>
+    </div>
+
+    <div class="modal-body">
+      <form class="product-form">
+        <!-- Basic Information -->
+        <div class="form-section">
+          <h3>Basic Information</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Product Name *</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="currentProduct.name"
+                name="name"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>SKU</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="currentProduct.sku"
+                name="sku"
+              />
+            </div>
+
+            <div class="form-group full-width">
+              <label>Description</label>
+              <textarea 
+                class="form-input" 
+                rows="3"
+                [(ngModel)]="currentProduct.description"
+                name="description"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Categorization -->
+        <div class="form-section">
+          <h3>Categorization</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Category *</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="currentProduct.categoryName"
+                name="categoryName"
+                placeholder="e.g., Sneakers, Boots"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Sub-Category</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="currentProduct.subCategory"
+                name="subCategory"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Brand</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="currentProduct.brand"
+                name="brand"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Product Type</label>
+              <select class="form-input" [(ngModel)]="currentProduct.productType" name="productType">
+                <option value="footwear">Footwear</option>
+                <option value="bag">Bag</option>
+                <option value="clothing">Clothing</option>
+                <option value="accessory">Accessory</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attributes -->
+        <div class="form-section">
+          <h3>Product Attributes</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Color</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="currentProduct.color"
+                name="color"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Gender</label>
+              <select class="form-input" [(ngModel)]="currentProduct.gender" name="gender">
+                <option value="">Select</option>
+                <option value="Men">Men</option>
+                <option value="Women">Women</option>
+                <option value="Unisex">Unisex</option>
+                <option value="Kids">Kids</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Unit of Measure</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="currentProduct.unitOfMeasure"
+                name="unitOfMeasure"
+                placeholder="e.g., Pair, Piece"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Pricing & Inventory -->
+        <div class="form-section">
+          <h3>Pricing & Inventory</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Price (₱) *</label>
+              <input 
+                type="number" 
+                class="form-input" 
+                [(ngModel)]="currentProduct.price"
+                name="price"
+                min="0"
+                step="0.01"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Stock Quantity *</label>
+              <input 
+                type="number" 
+                class="form-input" 
+                [(ngModel)]="currentProduct.stockQuantity"
+                name="stockQuantity"
+                min="0"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Discount (%)</label>
+              <input 
+                type="number" 
+                class="form-input" 
+                [(ngModel)]="currentProduct.discountPercentage"
+                name="discountPercentage"
+                min="0"
+                max="100"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Images -->
+        <div class="form-section">
+          <h3>Images</h3>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Main Image Filename</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="currentProduct.imageFile"
+                name="imageFile"
+                placeholder="e.g., product1 (without .jpg)"
+              />
+              <small class="form-hint">Place image in assets/products/ folder</small>
+            </div>
+
+            <div class="form-group">
+              <label>Additional Images</label>
+              <input 
+                type="text" 
+                class="form-input" 
+                [(ngModel)]="currentProduct.additionalImages"
+                name="additionalImages"
+                placeholder="comma-separated filenames"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Flags -->
+        <div class="form-section">
+          <h3>Product Flags</h3>
+          <div class="form-checkboxes">
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="currentProduct.isFeatured"
+                name="isFeatured"
+              />
+              Featured Product
+            </label>
+
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="currentProduct.isNewArrival"
+                name="isNewArrival"
+              />
+              New Arrival
+            </label>
+
+            <label class="checkbox-label">
+              <input 
+                type="checkbox" 
+                [(ngModel)]="currentProduct.isBestSeller"
+                name="isBestSeller"
+              />
+              Best Seller
+            </label>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" (click)="closeProductModal()">
+            Cancel
+          </button>
+          <button type="button" class="btn-save" (click)="saveProduct()">
+            {{ isEditMode ? 'Update Product' : 'Create Product' }}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Stock Update Modal -->
+<div class="modal-overlay" *ngIf="showStockModal" (click)="closeStockModal()">
+  <div class="modal-content modal-small" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Update Stock</h2>
+      <button class="close-btn" (click)="closeStockModal()">×</button>
+    </div>
+
+    <div class="modal-body" *ngIf="stockProduct">
+      <div class="stock-info">
+        <h3>{{ stockProduct.name }}</h3>
+        <p class="current-stock">
+          Current Stock: 
+          <strong [ngClass]="getStockClass(stockProduct.stockQuantity)">
+            {{ stockProduct.stockQuantity }}
+          </strong>
+        </p>
+      </div>
+
+      <div class="form-group">
+        <label>New Stock Quantity</label>
+        <input 
+          type="number" 
+          class="form-input" 
+          [(ngModel)]="newStockValue"
+          min="0"
+        />
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-cancel" (click)="closeStockModal()">
+          Cancel
+        </button>
+        <button type="button" class="btn-save" (click)="updateStock()">
+          Update Stock
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loading-state">
+    <div class="spinner"></div>
+    <p>Loading products...</p>
+  </div>
+</ng-template>
