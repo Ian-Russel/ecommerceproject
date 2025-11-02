@@ -1,3 +1,23 @@
+.admin-btn {
+  background: rgba(255, 255, 255, 0.95);
+  color: #4a2b09;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.25s ease;
+}
+
+.admin-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(92, 61, 46, 0.2);
+}
+
+.admin-btn.active {
+  background-color: #5c3d2e;
+  color: #fff;
+  border-color: #5c3d2e;
+  box-shadow: 0 4px 12px rgba(92, 61, 46, 0.4);
+  transform: translateY(-2px);
+}
+
 .header {
   width: 100%;
   background: linear-gradient(135deg, #d4a574 0%, #c49865 50%, #d4a574 100%);
@@ -14,7 +34,7 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.8rem 2rem;
-  gap: 2rem;
+  gap: 1.5rem;
 }
 
 .logo-section {
@@ -51,6 +71,7 @@
 }
 
 .nav-button {
+  position: relative;
   padding: 0.8rem 1.5rem;
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid rgba(255, 255, 255, 0.3);
@@ -60,17 +81,28 @@
   font-weight: bold;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all 0.25s ease;
   white-space: nowrap;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 .nav-button:hover {
-  background: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(92, 61, 46, 0.2);
 }
 
+.nav-button.active {
+  background-color: #5c3d2e !important;
+  color: #fff !important;
+  border-color: #5c3d2e !important;
+  box-shadow: 0 4px 12px rgba(92, 61, 46, 0.4);
+  transform: translateY(-2px);
+}
+
+.nav-button.active:hover {
+  background-color: #4a2b1f;
+  border-color: #4a2b1f;
+}
 
 .user-display {
   background: rgba(255, 255, 255, 0.95);
@@ -80,32 +112,55 @@
 }
 
 .logout-button {
-  background: rgba(184, 133, 85, 0.1);
-  color: #7b3f00;
-  border-color: #b88555;
+  background: rgba(255, 255, 255, 0.95);
+  color: #4a2b09;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.25s ease;
 }
 
 .logout-button:hover {
-  background: linear-gradient(135deg, #b88555 0%, #a06f45 100%);
+  background-color: #5c3d2e;
   color: #fff;
-  border-color: #a06f45;
+  border-color: #5c3d2e;
+  box-shadow: 0 4px 12px rgba(92, 61, 46, 0.4);
+  transform: translateY(-2px);
+}
+
+
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #d32f2f;
+  color: white;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 2px 6px;
+  border-radius: 10px;
+  min-width: 18px;
+  text-align: center;
 }
 
 @media (max-width: 1200px) {
   .header-content {
-    flex-direction: column;
+    flex-wrap: wrap;
     padding: 1rem;
-    gap: 1rem;
   }
 
   .logo-section {
+    order: 1;
+  }
+
+  .header-search {
+    order: 3;
     width: 100%;
-    justify-content: space-between;
+    max-width: 100%;
   }
 
   .nav-menu {
-    width: 100%;
-    justify-content: center;
+    order: 2;
+    flex: 1;
+    justify-content: flex-end;
   }
 
   .tagline {
@@ -131,6 +186,36 @@
   .nav-menu {
     gap: 0.5rem;
   }
+
+  .header-search {
+    padding: 0.25rem 0.5rem 0.25rem 1rem;
+  }
+
+  .header-search-input {
+    font-size: 13px;
+  }
+
+  .header-search-btn {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-content {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .logo-section,
+  .nav-menu,
+  .header-search {
+    width: 100%;
+  }
+
+  .nav-menu {
+    justify-content: center;
+  }
 }
 
 .header-content::-webkit-scrollbar {
@@ -140,35 +225,4 @@
 .header-content {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-
-.cart-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background: #d32f2f;
-  color: white;
-  font-size: 11px;
-  font-weight: bold;
-  padding: 2px 6px;
-  border-radius: 10px;
-  min-width: 18px;
-  text-align: center;
-}
-
-.nav-button {
-  position: relative;
-  padding: 0.8rem 1.5rem;
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 25px;
-  color: #4a148c;
-  font-family: Verdana, Geneva, Tahoma, sans-serif;
-  font-weight: bold;
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  white-space: nowrap;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }

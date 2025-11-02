@@ -5,7 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
-
+import com.bautista.entity.ReviewData;
+import com.bautista.model.Review;
+import org.springframework.stereotype.Component;
 
 public class Transform< V, K>{
 
@@ -46,5 +48,29 @@ public class Transform< V, K>{
         }catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException nex){
             return null;
         }
+    }
+    public Review toReview(ReviewData reviewData) {
+        if (reviewData == null) {
+            return null;
+        }
+
+        Review review = new Review();
+        review.setId(reviewData.getId());
+        review.setProductId(reviewData.getProductId());
+        review.setUserId(reviewData.getUserId());
+        review.setOrderId(reviewData.getOrderId());
+        review.setRating(reviewData.getRating());
+        review.setTitle(reviewData.getTitle());
+        review.setComment(reviewData.getComment());
+        review.setVerifiedPurchase(reviewData.getVerifiedPurchase());
+        review.setIsApproved(reviewData.getIsApproved());
+        review.setCustomerName(reviewData.getCustomerName());
+        review.setCustomerEmail(reviewData.getCustomerEmail());
+        review.setHelpfulCount(reviewData.getHelpfulCount());
+        review.setNotHelpfulCount(reviewData.getNotHelpfulCount());
+        review.setCreatedAt(reviewData.getCreatedAt());
+        review.setUpdatedAt(reviewData.getUpdatedAt());
+
+        return review;
     }
 }

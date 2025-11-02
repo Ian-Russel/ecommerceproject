@@ -3,7 +3,7 @@
     margin: 0 auto;
     padding: 40px 20px;
     min-height: calc(100vh - 200px);
-    background: linear-gradient(135deg, #fffdf8 0%, #f8f4ef 100%);
+    background: #fffdf8;
 }
 
 .orders-header {
@@ -72,7 +72,7 @@
 }
 
 .filter-tab.active {
-    background: linear-gradient(135deg, #d4a574 0%, #c49865 100%);
+    background: #d4a574;
     border-color: #d4a574;
     color: white;
 }
@@ -266,7 +266,7 @@
 .btn-view-details,
 .btn-primary {
     padding: 10px 20px;
-    background: linear-gradient(135deg, #d4a574 0%, #c49865 100%);
+    background: #d4a574;
     color: white;
     border: none;
     border-radius: 8px;
@@ -277,7 +277,7 @@
 
 .btn-view-details:hover,
 .btn-primary:hover {
-    background: linear-gradient(135deg, #c49865 0%, #b68750 100%);
+    background: #c49865;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(196, 152, 101, 0.4);
 }
@@ -300,27 +300,27 @@
         gap: 15px;
         align-items: flex-start;
     }
-    
+
     .order-item {
         grid-template-columns: 60px 1fr;
     }
-    
+
     .item-subtotal {
         grid-column: 2;
         text-align: right;
     }
-    
+
     .order-footer {
         flex-direction: column;
         gap: 20px;
         align-items: stretch;
     }
-    
+
     .order-info {
         flex-direction: column;
         gap: 12px;
     }
-    
+
     .filter-tabs {
         overflow-x: auto;
         flex-wrap: nowrap;

@@ -17,6 +17,8 @@ export class ProductCategoryComponent implements OnInit {
   filteredProducts: Product[] = [];
   isLoading = true;
   
+  selectedProduct: Product | null = null;
+  
   filterOptions: FilterOptions = {
     categories: [],
     brands: [],
@@ -152,5 +154,64 @@ export class ProductCategoryComponent implements OnInit {
   get hasActiveFilters(): boolean {
     return !!(this.searchQuery || this.selectedCategory || this.selectedBrand || 
               this.selectedColor || this.selectedGender || this.minPrice || this.maxPrice);
+  }
+
+  openProductDetail(product: Product): void {
+    this.selectedProduct = product;
+    document.body.style.overflow = 'hidden';
+  }
+
+  closeProductDetail(): void {
+    this.selectedProduct = null;
+    document.body.style.overflow = 'auto';
+  }
+
+  getCurrentUserId(): number | undefined {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      try {
+        const user = JSON.parse(userStr);
+        
+        if (user.id) return user.id;
+        if (user.userId) return user.userId;
+        if (user.user_id) return user.user_id;
+      } catch (e) {
+        console.error('Error parsing user data:', e);
+      }
+    }
+    
+    if (this.authService.getCurrentUser) {
+      const currentUser = this.authService.getCurrentUser();
+      if (currentUser?.id) return currentUser.id;
+    }
+    
+    const sessionUser = sessionStorage.getItem('user');
+    if (sessionUser) {
+      try {
+        const user = JSON.parse(sessionUser);
+        if (user.id) return user.id;
+      } catch (e) {
+        console.error('Error parsing session user:', e);
+      }
+    }
+    
+    console.warn('Could not find user ID');
+    return undefined;
+  }
+
+  onReviewSubmitted(): void {
+    console.log('Review submitted successfully!');
+    if (this.selectedProduct) {
+      this.productService.getProductById(this.selectedProduct.id).subscribe({
+        next: (updatedProduct) => {
+          this.selectedProduct = updatedProduct;
+          const index = this.filteredProducts.findIndex(p => p.id === updatedProduct.id);
+          if (index !== -1) {
+            this.filteredProducts[index] = updatedProduct;
+          }
+        },
+        error: (err) => console.error('Error reloading product:', err)
+      });
+    }
   }
 }

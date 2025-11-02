@@ -122,7 +122,10 @@
       </div>
 
       <div class="products-grid" *ngIf="filteredProducts.length > 0; else noResults">
-        <div *ngFor="let prod of filteredProducts" class="product-card">
+        <div *ngFor="let prod of filteredProducts" 
+             class="product-card" 
+             (click)="openProductDetail(prod)">
+          
           <div class="product-badges">
             <span *ngIf="prod.isNewArrival" class="badge new">New</span>
             <span *ngIf="prod.isBestSeller" class="badge bestseller">Best Seller</span>
@@ -172,24 +175,8 @@
                   ₱{{ formatPrice(calculateDiscountedPrice(prod)) }}
                 </span>
               </div>
-
-              <button 
-                class="add-to-cart-btn"
-                (click)="addToCart(prod, $event)"
-                [disabled]="isOutOfStock(prod)"
-                [class.disabled]="isOutOfStock(prod)"
-                aria-label="Add to cart"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-                     stroke="currentColor" stroke-width="2">
-                  <circle cx="9" cy="21" r="1"/>
-                  <circle cx="20" cy="21" r="1"/>
-                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                </svg>
-                {{ isOutOfStock(prod) ? 'Out of Stock' : 'Add to Cart' }}
-              </button>
             </div>
-
+            
             <div *ngIf="!isOutOfStock(prod) && prod.stockQuantity <= 5" class="stock-warning">
               Only {{ prod.stockQuantity }} left in stock!
             </div>
@@ -208,6 +195,109 @@
           <button class="clear-filters-btn" (click)="clearFilters()">Clear Filters</button>
         </div>
       </ng-template>
+    </div>
+  </div>
+</div>
+
+<div class="product-detail-modal" *ngIf="selectedProduct" (click)="closeProductDetail()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <button class="close-btn" (click)="closeProductDetail()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
+    <div class="modal-body">
+      <div class="product-detail-main">
+        <div class="product-detail-image">
+          <img 
+            [src]="'assets/products/' + selectedProduct.imageFile + '.jpg'" 
+            [alt]="selectedProduct.name"
+          />
+        </div>
+
+        <div class="product-detail-info">
+          <div class="product-badges-detail">
+            <span *ngIf="selectedProduct.isNewArrival" class="badge new">New</span>
+            <span *ngIf="selectedProduct.isBestSeller" class="badge bestseller">Best Seller</span>
+            <span *ngIf="selectedProduct.discountPercentage > 0" class="badge discount">
+              -{{ selectedProduct.discountPercentage }}%
+            </span>
+          </div>
+
+          <h2 class="detail-title">{{ selectedProduct.name }}</h2>
+          <p class="detail-brand" *ngIf="selectedProduct.brand">{{ selectedProduct.brand }}</p>
+
+          <div class="detail-rating" *ngIf="selectedProduct.rating > 0">
+            <span class="stars">★ {{ selectedProduct.rating }}</span>
+            <span class="review-count">({{ selectedProduct.reviewCount }} reviews)</span>
+          </div>
+
+          <p class="detail-description">{{ selectedProduct.description }}</p>
+
+          <div class="detail-meta">
+            <div class="meta-row" *ngIf="selectedProduct.categoryName">
+              <strong>Category:</strong> {{ selectedProduct.categoryName }}
+            </div>
+            <div class="meta-row" *ngIf="selectedProduct.color">
+              <strong>Color:</strong> 
+              <span class="color-dot" [style.backgroundColor]="selectedProduct.color"></span>
+              {{ selectedProduct.color }}
+            </div>
+            <div class="meta-row" *ngIf="selectedProduct.gender">
+              <strong>Gender:</strong> {{ selectedProduct.gender }}
+            </div>
+            <div class="meta-row">
+              <strong>Stock:</strong> 
+              <span [class.low-stock]="selectedProduct.stockQuantity <= 5">
+                {{ selectedProduct.stockQuantity }} available
+              </span>
+            </div>
+          </div>
+
+          <div class="detail-price-section">
+            <div class="price-display">
+              <span *ngIf="selectedProduct.discountPercentage > 0" class="price-original">
+                ₱{{ selectedProduct.price }}
+              </span>
+              <span class="price-current">
+                ₱{{ formatPrice(calculateDiscountedPrice(selectedProduct)) }}
+              </span>
+            </div>
+
+            <button 
+              class="add-to-cart-btn-large"
+              (click)="addToCart(selectedProduct, $event)"
+              [disabled]="isOutOfStock(selectedProduct)"
+              [class.disabled]="isOutOfStock(selectedProduct)"
+              aria-label="Add to cart"
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="9" cy="21" r="1"/>
+                <circle cx="20" cy="21" r="1"/>
+                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              </svg>
+              {{ isOutOfStock(selectedProduct) ? 'Out of Stock' : 'Add to Cart' }}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="reviews-section">
+        <div class="section-divider"></div>
+        
+        <app-write-review 
+          [productId]="selectedProduct.id" 
+          [userId]="getCurrentUserId()"
+          (reviewSubmitted)="onReviewSubmitted()">
+        </app-write-review>
+
+        <app-product-reviews 
+          [productId]="selectedProduct.id"
+          [currentUserId]="getCurrentUserId()">
+        </app-product-reviews>
+      </div>
     </div>
   </div>
 </div>

@@ -1,51 +1,61 @@
 <div class="header">
-    <div class="header-content">
-        <div class="logo-section">
-            <a routerLink="/">
-                <img src="assets/BCorpLogo.png" alt="Bautista Corporation" class="logo" />
-            </a>
-            <span class="tagline">Where you enjoy the most shopping experience</span>
-        </div>
-        
-        <nav class="nav-menu">
-            <button 
-                *ngFor="let menu of menus" 
-                class="nav-button"
-                [routerLink]="'/' + menu.routerPath"
-                [routerLinkActive]="'active'"
-            >
-                {{menu.name}}
-                <span *ngIf="menu.routerPath === 'cart' && cartItemCount > 0" class="cart-badge">
-                    {{cartItemCount}}
-                </span>
-            </button>
-            
-            <button 
-                *ngIf="currentUser && isAdmin()"
-                class="nav-button admin-btn"
-                routerLink="/admin"
-                [routerLinkActive]="'active'"
-            >
-                 Admin
-            </button>
-            
-            <ng-container *ngIf="!currentUser">
-                <button class="nav-button" routerLink="/signup">
-                    Sign Up
-                </button>
-                <button class="nav-button" routerLink="/login">
-                    Login
-                </button>
-            </ng-container>
-            
-            <ng-container *ngIf="currentUser">
-                <button class="nav-button user-display">
-                    👤 {{getUserDisplayName()}}
-                </button>
-                <button class="nav-button logout-button" (click)="logout()">
-                    Logout
-                </button>
-            </ng-container>
-        </nav>
+  <div class="header-content">
+    <div class="logo-section">
+      <a routerLink="/">
+        <img src="assets/BCorpLogo.png" alt="Bautista Corporation" class="logo" />
+      </a>
+      <span class="tagline">Where you enjoy the most shopping experience</span>
     </div>
+
+    <nav class="nav-menu">
+            <button
+            *ngFor="let menu of menus"
+            class="nav-button"
+            [routerLink]="menu.routerPath === '' ? '/' : '/' + menu.routerPath"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: menu.routerPath === '' }"
+            >
+            {{ menu.name }}
+            <span *ngIf="menu.routerPath === 'cart' && cartItemCount > 0" class="cart-badge">
+                {{ cartItemCount }}
+            </span>
+            </button>
+
+
+      <button
+        *ngIf="currentUser && isAdmin()"
+        class="nav-button admin-btn"
+        routerLink="/admin"
+        routerLinkActive="active"
+        [routerLinkActiveOptions]="{ exact: true }"
+      >
+        Admin
+      </button>
+
+        <ng-container *ngIf="!currentUser">
+        <button
+            class="nav-button"
+            routerLink="/signup"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+        >
+            Sign Up
+        </button>
+        <button
+            class="nav-button"
+            routerLink="/login"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+        >
+            Login
+        </button>
+        </ng-container>
+
+
+      <ng-container *ngIf="currentUser">
+        <button class="nav-button user-display">👤 {{ getUserDisplayName() }}</button>
+        <button class="nav-button logout-button" (click)="logout()">Logout</button>
+      </ng-container>
+    </nav>
+  </div>
 </div>

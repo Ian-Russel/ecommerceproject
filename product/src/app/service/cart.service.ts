@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { CartItem, Cart } from '../model/cart';
+import { BehaviorSubject } from 'rxjs';
+import { Cart, CartItem } from '../model/cart';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +10,6 @@ export class CartService {
   public cart$ = this.cartSubject.asObservable();
 
   constructor() {
-    // Load cart from localStorage on initialization
     this.loadCart();
   }
 
@@ -18,7 +17,9 @@ export class CartService {
     const savedCart = localStorage.getItem('shopping_cart');
     if (savedCart) {
       try {
-        const cart = JSON.parse(savedCart);
+        const parsed = JSON.parse(savedCart);
+        const cart = new Cart();
+        cart.items = parsed.items.map((i: any) => Object.assign(new CartItem(), i));
         this.cartSubject.next(cart);
         console.log('Cart loaded from storage:', cart);
       } catch (error) {
@@ -36,8 +37,6 @@ export class CartService {
 
   addToCart(product: any, quantity: number = 1): void {
     const cart = this.cartSubject.value;
-    
-    // Check if item already exists in cart
     const existingItemIndex = cart.items.findIndex(
       item => item.productId === product.id
     );
@@ -45,19 +44,18 @@ export class CartService {
     if (existingItemIndex > -1) {
       cart.items[existingItemIndex].quantity += quantity;
     } else {
-      const cartItem: CartItem = {
-        id: Date.now(),
-        productId: product.id,
-        productName: product.name,
-        productPrice: product.price,
-        productImage: product.imageFile,
-        quantity: quantity,
-        categoryName: product.categoryName,
-        color: product.color,
-        size: product.attributes?.size,
-        brand: product.brand,
-        subtotal: product.price * quantity
-      };
+      const cartItem = new CartItem();
+      cartItem.id = Date.now();
+      cartItem.productId = product.id;
+      cartItem.productName = product.name;
+      cartItem.productPrice = product.price;
+      cartItem.productImage = product.imageFile;
+      cartItem.quantity = quantity;
+      cartItem.categoryName = product.categoryName;
+      cartItem.color = product.color;
+      cartItem.size = product.attributes?.size;
+      cartItem.brand = product.brand;
+
       cart.items.push(cartItem);
     }
 
@@ -80,7 +78,7 @@ export class CartService {
     }
 
     const cart = this.cartSubject.value;
-    const item = cart.items.find(item => item.id === cartItemId);
+    const item = cart.items.find(i => i.id === cartItemId);
     if (item) {
       item.quantity = quantity;
       this.cartSubject.next(cart);

@@ -30,6 +30,14 @@
     </button>
     <button 
       class="tab-btn" 
+      [class.active]="activeTab === 'reviews'"
+      (click)="switchTab('reviews')"
+    >
+      Reviews
+      <span *ngIf="pendingReviewsCount > 0" class="badge-count">{{ pendingReviewsCount }}</span>
+    </button>
+    <button 
+      class="tab-btn" 
       [class.active]="activeTab === 'customers'"
       (click)="switchTab('customers')"
     >
@@ -37,6 +45,7 @@
     </button>
   </div>
 
+  <!-- Overview Tab (existing) -->
   <div class="tab-content" *ngIf="activeTab === 'overview' && stats">
     <div class="stats-grid">
       <div class="stat-card revenue">
@@ -93,28 +102,36 @@
       </div>
     </div>
 
-    <!-- Quick Actions -->
     <div class="quick-actions">
       <h2>Quick Actions</h2>
       <div class="action-buttons">
         <button class="action-btn" (click)="navigateToOrders()">
-          <span class="btn-icon"></span>
+          <span class="btn-icon">📦</span>
           <span class="btn-text">View All Orders</span>
         </button>
         <button class="action-btn" (click)="navigateToProducts()">
-          <span class="btn-icon"></span>
+          <span class="btn-icon">🛍️</span>
           <span class="btn-text">Manage Products</span>
         </button>
+        <button class="action-btn" (click)="switchTab('reviews')">
+          <span class="btn-icon">⭐</span>
+          <span class="btn-text">Manage Reviews</span>
+        </button>
         <button class="action-btn" (click)="navigateToCustomers()">
-          <span class="btn-icon"></span>
+          <span class="btn-icon">👥</span>
           <span class="btn-text">View Customers</span>
         </button>
       </div>
     </div>
 
-    <div class="alerts-section" *ngIf="stats.lowStockProducts > 0 || stats.outOfStockProducts > 0">
+    <div class="alerts-section" *ngIf="stats.lowStockProducts > 0 || stats.outOfStockProducts > 0 || pendingReviewsCount > 0">
       <h2>⚠️ Alerts</h2>
       <div class="alerts-grid">
+        <div class="alert-card warning" *ngIf="pendingReviewsCount > 0">
+          <h4>Pending Reviews</h4>
+          <p>{{ pendingReviewsCount }} reviews awaiting approval</p>
+          <button class="alert-btn" (click)="switchTab('reviews')">Review Now</button>
+        </div>
         <div class="alert-card warning" *ngIf="stats.lowStockProducts > 0">
           <h4>Low Stock Alert</h4>
           <p>{{ stats.lowStockProducts }} products have low stock (≤5 items)</p>
@@ -129,7 +146,7 @@
     </div>
   </div>
 
-  <!-- Orders Tab -->
+  <!-- Orders Tab (existing) -->
   <div class="tab-content" *ngIf="activeTab === 'orders'">
     <div class="section-header">
       <h2>Order Management</h2>
@@ -138,7 +155,7 @@
     <p class="coming-soon">Full order management interface coming soon. Use "View All Orders" to see the complete list.</p>
   </div>
 
-  <!-- Products Tab -->
+  <!-- Products Tab (existing) -->
   <div class="tab-content" *ngIf="activeTab === 'products'">
     <div class="section-header">
       <h2>Product Management</h2>
@@ -147,7 +164,123 @@
     <p class="coming-soon">Full product management interface coming soon.</p>
   </div>
 
-  <!-- Customers Tab -->
+  <!-- NEW: Reviews Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'reviews'">
+    <div class="section-header">
+      <h2>Review Management</h2>
+      <div class="review-filters">
+        <button 
+          class="filter-btn" 
+          [class.active]="reviewFilter === 'all'"
+          (click)="setReviewFilter('all')"
+        >
+          All Reviews ({{ allReviews.length }})
+        </button>
+        <button 
+          class="filter-btn" 
+          [class.active]="reviewFilter === 'pending'"
+          (click)="setReviewFilter('pending')"
+        >
+          Pending ({{ pendingReviewsCount }})
+        </button>
+        <button 
+          class="filter-btn" 
+          [class.active]="reviewFilter === 'approved'"
+          (click)="setReviewFilter('approved')"
+        >
+          Approved
+        </button>
+      </div>
+    </div>
+
+    <div class="reviews-table" *ngIf="filteredReviews.length > 0">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Product</th>
+            <th>Customer</th>
+            <th>Rating</th>
+            <th>Review</th>
+            <th>Date</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let review of filteredReviews">
+            <td>#{{ review.id }}</td>
+            <td>
+              <div class="product-info-cell">
+                <strong>Product ID: {{ review.productId }}</strong>
+              </div>
+            </td>
+            <td>
+              <div class="customer-info-cell">
+                <strong>{{ review.customerName }}</strong>
+                <small>{{ review.customerEmail }}</small>
+              </div>
+            </td>
+            <td>
+              <div class="rating-stars">
+                <span *ngFor="let i of [1,2,3,4,5]" class="star" [class.filled]="i <= review.rating">★</span>
+                <span class="rating-number">({{ review.rating }})</span>
+              </div>
+            </td>
+            <td>
+              <div class="review-content">
+                <strong *ngIf="review.title">{{ review.title }}</strong>
+                <p>{{ review.comment }}</p>
+                <div class="review-meta">
+                  <span *ngIf="review.verifiedPurchase" class="verified-badge">✓ Verified</span>
+                  <span class="helpful-info">👍 {{ review.helpfulCount }} | 👎 {{ review.notHelpfulCount }}</span>
+                </div>
+              </div>
+            </td>
+            <td>{{ formatDate(review.createdAt) }}</td>
+            <td>
+              <span class="status-badge" [class.approved]="review.isApproved" [class.pending]="!review.isApproved">
+                {{ review.isApproved ? 'Approved' : 'Pending' }}
+              </span>
+            </td>
+            <td>
+              <div class="action-buttons-cell">
+                <button 
+                  *ngIf="!review.isApproved" 
+                  class="action-btn-small approve"
+                  (click)="approveReview(review.id!)"
+                  title="Approve Review"
+                >
+                  ✓ Approve
+                </button>
+                <button 
+                  *ngIf="review.isApproved" 
+                  class="action-btn-small reject"
+                  (click)="rejectReview(review.id!)"
+                  title="Reject Review"
+                >
+                  ✗ Reject
+                </button>
+                <button 
+                  class="action-btn-small delete"
+                  (click)="deleteReview(review.id!)"
+                  title="Delete Review"
+                >
+                  🗑️ Delete
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="no-data" *ngIf="filteredReviews.length === 0">
+      <p>No {{ reviewFilter }} reviews found</p>
+    </div>
+  </div>
+
+  <!-- Customers Tab (existing) -->
   <div class="tab-content" *ngIf="activeTab === 'customers'">
     <div class="section-header">
       <h2>Customer List</h2>

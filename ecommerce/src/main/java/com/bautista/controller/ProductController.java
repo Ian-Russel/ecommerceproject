@@ -71,7 +71,6 @@ public class ProductController {
         }
     }
 
-    // NEW: Get all unique filter values
     @GetMapping("/api/product/filters")
     public ResponseEntity<?> getFilterOptions() {
         try {

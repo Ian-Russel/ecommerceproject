@@ -1,0 +1,83 @@
+<div class="write-review-container">
+  <h3>Write a Review</h3>
+
+  <div *ngIf="hasAlreadyReviewed" class="already-reviewed">
+    <p>✓ You have already reviewed this product</p>
+  </div>
+
+  <div *ngIf="!userId" class="login-required">
+    <p>Please log in to write a review</p>
+  </div>
+
+  <form *ngIf="userId && !hasAlreadyReviewed" 
+        [formGroup]="reviewForm" 
+        (ngSubmit)="onSubmit()" 
+        class="review-form">
+
+    <div *ngIf="success" class="alert alert-success">
+      {{ success }}
+    </div>
+
+    <div *ngIf="error" class="alert alert-error">
+      {{ error }}
+    </div>
+
+    <div class="form-group">
+      <label>Your Rating *</label>
+      <div class="star-rating">
+        <span *ngFor="let i of [1, 2, 3, 4, 5]"
+              class="star"
+              [class.filled]="i <= getDisplayRating()"
+              (click)="selectRating(i)"
+              (mouseenter)="hoverRating(i)"
+              (mouseleave)="resetHover()">
+          ★
+        </span>
+      </div>
+      <div *ngIf="ratingControl?.invalid && ratingControl?.touched" class="error-message">
+        Please select a rating
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="title">Review Title (Optional)</label>
+      <input 
+        id="title"
+        type="text" 
+        formControlName="title" 
+        placeholder="Summarize your experience"
+        maxlength="200"
+        class="form-control">
+      <small class="char-count">
+        {{ titleControl?.value?.length || 0 }}/200
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label for="comment">Your Review *</label>
+      <textarea 
+        id="comment"
+        formControlName="comment" 
+        rows="6"
+        placeholder="Share your thoughts about this product..."
+        maxlength="2000"
+        class="form-control"></textarea>
+      <small class="char-count">
+        {{ commentControl?.value?.length || 0 }}/2000
+      </small>
+      <div *ngIf="commentControl?.invalid && commentControl?.touched" class="error-message">
+        Review comment is required
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button 
+        type="submit" 
+        class="submit-btn"
+        [disabled]="loading || reviewForm.invalid">
+        <span *ngIf="!loading">Submit Review</span>
+        <span *ngIf="loading">Submitting...</span>
+      </button>
+    </div>
+  </form>
+</div>

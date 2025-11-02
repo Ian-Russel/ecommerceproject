@@ -1,0 +1,87 @@
+<div class="reviews-container">
+  <div class="review-summary" *ngIf="reviewSummary">
+    <h3>Customer Reviews</h3>
+    
+    <div class="overall-rating">
+      <div class="rating-display">
+        <span class="average-rating">{{ reviewSummary.averageRating.toFixed(1) }}</span>
+        <div class="stars">
+          <span *ngFor="let star of getStarArray(Math.round(reviewSummary.averageRating))" 
+                class="star" [class.filled]="star === 1">
+            ★
+          </span>
+        </div>
+        <span class="total-reviews">{{ reviewSummary.totalReviews }} reviews</span>
+      </div>
+
+      <div class="rating-distribution">
+        <div class="rating-bar" *ngFor="let rating of [5, 4, 3, 2, 1]">
+          <span class="rating-label">{{ rating }} ★</span>
+          <div class="bar-container">
+            <div class="bar-fill" 
+                 [style.width.%]="getRatingPercentage(
+                   rating === 5 ? reviewSummary.fiveStarCount :
+                   rating === 4 ? reviewSummary.fourStarCount :
+                   rating === 3 ? reviewSummary.threeStarCount :
+                   rating === 2 ? reviewSummary.twoStarCount :
+                   reviewSummary.oneStarCount
+                 )">
+            </div>
+          </div>
+          <span class="rating-count">
+            {{ rating === 5 ? reviewSummary.fiveStarCount :
+               rating === 4 ? reviewSummary.fourStarCount :
+               rating === 3 ? reviewSummary.threeStarCount :
+               rating === 2 ? reviewSummary.twoStarCount :
+               reviewSummary.oneStarCount }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading">
+    <p>Loading reviews...</p>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <p>{{ error }}</p>
+  </div>
+
+  <div class="reviews-list" *ngIf="!loading && !error">
+    <div class="review-item" *ngFor="let review of reviews">
+      <div class="review-header">
+        <div class="reviewer-info">
+          <span class="reviewer-name">{{ review.customerName }}</span>
+          <span class="verified-badge" *ngIf="review.verifiedPurchase">
+            ✓ Verified Purchase
+          </span>
+        </div>
+        <span class="review-date">{{ getTimeAgo(review.createdAt!) }}</span>
+      </div>
+
+      <div class="review-rating">
+        <span *ngFor="let star of getStarArray(review.rating)" 
+              class="star filled">★</span>
+        <span class="review-title" *ngIf="review.title">{{ review.title }}</span>
+      </div>
+
+      <div class="review-comment" *ngIf="review.comment">
+        {{ review.comment }}
+      </div>
+
+      <div class="review-actions">
+        <button (click)="markHelpful(review.id!, true)" class="helpful-btn">
+          👍 Helpful ({{ review.helpfulCount }})
+        </button>
+        <button (click)="markHelpful(review.id!, false)" class="not-helpful-btn">
+          👎 Not Helpful ({{ review.notHelpfulCount }})
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="reviews.length === 0" class="no-reviews">
+      <p>No reviews yet. Be the first to review this product!</p>
+    </div>
+  </div>
+</div>

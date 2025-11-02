@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AppRoutingModule } from './app-routing.module';
@@ -27,6 +27,8 @@ import { FilterPipe } from './pipes/filter.pipe';
 import { AuthGuard } from './guards/auth.guard';
 import { AdminGuard } from './guards/admin.guard';
 import { AdminProductsComponent } from './admin-products/admin-products.component';
+import { ProductReviewsComponent } from './product-reviews/product-reviews.component';
+import { WriteReviewComponent } from './write-review/write-review.component';
 
 
 @NgModule({
@@ -48,7 +50,9 @@ import { AdminProductsComponent } from './admin-products/admin-products.componen
     ProductCategoryComponent,
     AdminDashboardComponent,
     AdminOrdersComponent,
-    AdminProductsComponent
+    AdminProductsComponent,
+    ProductReviewsComponent,
+    WriteReviewComponent
   ],
   imports: [
     BrowserModule,
@@ -56,6 +60,7 @@ import { AdminProductsComponent } from './admin-products/admin-products.componen
     FormsModule,
     HttpClientModule,
     RouterModule,
+    ReactiveFormsModule,
     AppRoutingModule
   ],
   providers: [AuthGuard, AdminGuard],

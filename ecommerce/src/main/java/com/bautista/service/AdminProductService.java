@@ -47,7 +47,6 @@ public class AdminProductService {
         ProductData existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> new Exception("Product not found with id: " + id));
 
-        // Copy properties from dto to existing entity
         BeanUtils.copyProperties(productDTO, existingProduct, "id", "created");
 
         ProductData updatedProduct = productRepository.save(existingProduct);
